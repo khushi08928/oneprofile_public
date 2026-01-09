@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, Link2, Users } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import Login from "@/pages/Login";
 
 export default function LandingPage() {
   return (
