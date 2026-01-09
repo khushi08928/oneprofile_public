@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { loginSchema } from "@/schemas/LoginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,7 +15,7 @@ import * as z from "zod";
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function SignInForm() {
-    const router = useRouter();
+    // const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -25,6 +25,11 @@ export default function SignInForm() {
     } = useForm<LoginFormData>({
         resolver: zodResolver(loginSchema),
     });
+
+    function onSubmit(values: LoginFormData) {
+        console.log(values);
+        setIsLoading(true);
+    }
 
 
 
@@ -52,7 +57,7 @@ export default function SignInForm() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                    <form className="space-y-4">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
@@ -69,12 +74,12 @@ export default function SignInForm() {
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <Label htmlFor="password">Password</Label>
-                                {/* <Link
+                                <Link
                                     to="/"
                                     className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                                 >
                                     Forgot password?
-                                </Link> */}
+                                </Link>
                             </div>
                             <Input
                                 id="password"
