@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginSchema } from "@/schemas/LoginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
 import axios from "axios";
@@ -13,9 +12,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-type LoginFormData = z.infer<typeof loginSchema>;
+const signupSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters").max(100, "Name is too long"),
+    email: z.string().email("Invalid email address"),
+    password: z.string().min(6, "Password must be at least 6 characters").max(100, "Password is too long"),
+});
 
-export default function SignInForm() {
+type SignupFormData = z.infer<typeof signupSchema>;
+
+export default function SignUpForm() {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -24,64 +29,53 @@ export default function SignInForm() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(loginSchema),
+    } = useForm<SignupFormData>({
+        resolver: zodResolver(signupSchema),
     });
 
-    async function onSubmit(values: LoginFormData) {
+    async function onSubmit(values: SignupFormData) {
         setIsLoading(true);
         setError(null);
 
         try {
-            // Attempt to login
-            const loginResponse = await axios.post("/api/auth/login", {
+            const response = await axios.post("/api/auth/signup", {
+                name: values.name,
                 email: values.email,
                 password: values.password,
             }, {
                 withCredentials: true,
             });
 
-            if (loginResponse.status === 200) {
-                // Check if user has completed onboarding
+            if (response.status === 201) {
+                // Auto-login the user after signup
                 try {
-                    const userResponse = await axios.get("/api/auth/me", {
+                    const loginResponse = await axios.post("/api/auth/login", {
+                        email: values.email,
+                        password: values.password,
+                    }, {
                         withCredentials: true,
                     });
 
-                    if (userResponse.status === 200 && userResponse.data) {
-                        const { hasCompletedOnboarding } = userResponse.data;
-
-                        if (hasCompletedOnboarding) {
-                            // User has completed onboarding - redirect to dashboard
-                            // @ts-expect-error - Route types will be inferred after dev server restart
-                            navigate({ to: "/dashboard" });
-                        } else {
-                            // User hasn't completed onboarding - redirect to onboarding
-                            // @ts-expect-error - Route types will be inferred after dev server restart
-                            navigate({ to: "/onboarding" });
-                        }
+                    if (loginResponse.status === 200) {
+                        // Redirect to onboarding after successful login
+                        // @ts-expect-error - Route types will be inferred after dev server restart
+                        navigate({ to: "/onboarding" });
                     }
-                } catch (userErr) {
-                    // If we can't get user info, redirect to onboarding to be safe
+                } catch (loginErr) {
+                    // If auto-login fails, redirect to login page
                     // @ts-expect-error - Route types will be inferred after dev server restart
-                    navigate({ to: "/onboarding" });
+                    navigate({ to: "/login" });
                 }
             }
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 // Handle specific error responses
-                if (err.response?.status === 401) {
-                    // Check if it's invalid credentials or account doesn't exist
-                    const errorMessage = err.response?.data?.error || "";
-                    if (errorMessage.toLowerCase().includes("invalid credentials")) {
-                        setError("Invalid email or password. Please check your credentials and try again.");
-                    } else {
-                        setError("Account does not exist. Please sign up first.");
-                    }
+                if (err.response?.status === 409) {
+                    setError("An account with this email already exists. Please login instead.");
                 } else if (err.response?.data?.error) {
                     setError(err.response.data.error);
                 } else {
-                    setError("An error occurred during login. Please try again.");
+                    setError("An error occurred during signup. Please try again.");
                 }
             } else {
                 setError("An unexpected error occurred. Please try again.");
@@ -90,8 +84,6 @@ export default function SignInForm() {
             setIsLoading(false);
         }
     }
-
-
 
     return (
         <div className="min-h-screen bg-background flex items-center justify-center px-6 py-8">
@@ -104,16 +96,15 @@ export default function SignInForm() {
                 Back to home
             </Link>
 
-            {/* Login Card */}
-
+            {/* Signup Card */}
             <Card className="w-full max-w-md sm:max-w-lg lg:max-w-sm border-border/50 bg-card/50 backdrop-blur-sm">
                 <CardHeader className="space-y-3 text-center">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                         <span className="text-2xl font-bold">O</span>
                     </div>
-                    <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+                    <CardTitle className="text-2xl font-bold">Create your account</CardTitle>
                     <CardDescription>
-                        Sign in to your account to continue
+                        Get started with your OneURL profile
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -124,6 +115,20 @@ export default function SignInForm() {
                     )}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="name">Name</Label>
+                            <Input
+                                id="name"
+                                type="text"
+                                placeholder="John Doe"
+                                className="bg-background/50 border-border/50 focus:border-primary transition-colors"
+                                {...register("name")}
+                            />
+                            {errors.name && (
+                                <p className="text-sm text-destructive">{errors.name.message}</p>
+                            )}
+                        </div>
+
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
                             <Input
@@ -137,16 +142,9 @@ export default function SignInForm() {
                                 <p className="text-sm text-destructive">{errors.email.message}</p>
                             )}
                         </div>
+
                         <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                {/* <Link
-                                    to="/"
-                                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    Forgot password?
-                                </Link> */}
-                            </div>
+                            <Label htmlFor="password">Password</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -158,12 +156,13 @@ export default function SignInForm() {
                                 <p className="text-sm text-destructive">{errors.password.message}</p>
                             )}
                         </div>
+
                         <Button
                             type="submit"
                             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
                             disabled={isLoading}
                         >
-                            {isLoading ? "Signing in..." : "Sign in"}
+                            {isLoading ? "Creating account..." : "Sign up"}
                         </Button>
                     </form>
 
@@ -199,14 +198,14 @@ export default function SignInForm() {
                                 fill="#EA4335"
                             />
                         </svg>
-                        Sign in with Google
+                        Sign up with Google
                     </Button> */}
 
                     <p className="text-center text-sm text-muted-foreground">
-                        Don't have an account?{" "}
+                        Already have an account?{" "}
                         {/* @ts-expect-error - Route types will be inferred after dev server restart */}
-                        <Link to="/signup" className="font-medium text-foreground hover:underline">
-                            Sign up
+                        <Link to="/login" className="font-medium text-foreground hover:underline">
+                            Sign in
                         </Link>
                     </p>
                 </CardContent>
