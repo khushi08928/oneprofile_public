@@ -29,7 +29,7 @@ export default function OnboardingFlow() {
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
     // Profile step state
-    const [profilePicture, setProfilePicture] = useState<string>("");
+    const profilePicture = "";
     const [displayName, setDisplayName] = useState("");
     const [bio, setBio] = useState("");
 
@@ -170,7 +170,6 @@ export default function OnboardingFlow() {
                     {currentStep === "profile" && (
                         <ProfileStep
                             profilePicture={profilePicture}
-                            setProfilePicture={setProfilePicture}
                             displayName={displayName}
                             setDisplayName={setDisplayName}
                             bio={bio}

@@ -5,7 +5,6 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface ProfileStepProps {
     profilePicture: string;
-    setProfilePicture: (value: string) => void;
     displayName: string;
     setDisplayName: (value: string) => void;
     bio: string;
@@ -16,7 +15,6 @@ interface ProfileStepProps {
 
 export default function ProfileStep({
     profilePicture,
-    setProfilePicture,
     displayName,
     setDisplayName,
     bio,
@@ -24,17 +22,6 @@ export default function ProfileStep({
     onContinue,
     onBack,
 }: ProfileStepProps) {
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setProfilePicture(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
     const getInitials = (name: string) => {
         return name
             .split(" ")
