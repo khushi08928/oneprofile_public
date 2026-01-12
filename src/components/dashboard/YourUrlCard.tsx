@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { Check, Copy, Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 

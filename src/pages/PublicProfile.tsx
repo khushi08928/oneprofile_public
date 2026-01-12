@@ -1,7 +1,7 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
+import axios from "@/lib/axios";
 import { useParams } from "@tanstack/react-router";
-import axios from "axios";
 import { Briefcase, GraduationCap, Link as LinkIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 

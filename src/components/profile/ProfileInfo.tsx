@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { Pencil, Save, X } from "lucide-react";
 import { useEffect, useState } from "react";
 

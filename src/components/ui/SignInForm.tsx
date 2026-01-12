@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import axios, {isAxiosError} from "@/lib/axios";
 import { loginSchema } from "@/schemas/LoginSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -68,7 +68,7 @@ export default function SignInForm() {
                 }
             }
         } catch (err) {
-            if (axios.isAxiosError(err)) {
+            if (isAxiosError(err)) {
                 // Handle specific error responses
                 if (err.response?.status === 401) {
                     // Check if it's invalid credentials or account doesn't exist

@@ -4,8 +4,8 @@ import LinksStep from "@/components/onboarding/LinksStep";
 import PreviewStep from "@/components/onboarding/PreviewStep";
 import ProfileStep from "@/components/onboarding/ProfileStep";
 import UsernameStep from "@/components/onboarding/UsernameStep";
+import axios from "@/lib/axios";
 import { useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 

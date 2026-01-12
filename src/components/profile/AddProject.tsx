@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { Briefcase, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { createPortal } from "react-dom";

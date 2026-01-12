@@ -12,8 +12,8 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import axios from "@/lib/axios";
 import { useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { Home, LogOut, User } from "lucide-react";
 import { useEffect, useState } from "react";
 

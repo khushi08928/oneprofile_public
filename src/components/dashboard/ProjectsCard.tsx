@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import axios from "axios";
+import axios from "@/lib/axios";
 import { Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 
