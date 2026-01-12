@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { ArrowRight, BarChart3, Link2, Users } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { ArrowRight, BarChart3, Link2, Users } from "lucide-react";
 
 export default function LandingPage() {
   return (
@@ -34,8 +34,8 @@ export default function LandingPage() {
             </p>
 
             <div className="flex items-center justify-center gap-4 pt-4">
-            {/* @ts-expect-error - Route types will be inferred after dev server restart */}
-              <Link to="/login">
+              {/* @ts-expect-error - Route types will be inferred after dev server restart */}
+              <Link to="/signup">
                 <Button size="lg" className="group bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200">
                   Get your URL
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
