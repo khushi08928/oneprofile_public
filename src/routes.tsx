@@ -11,6 +11,7 @@ import Onboarding from "./pages/Onboarding";
 import Profile from "./pages/Profile";
 import { PublicProfile } from "./pages/PublicProfile";
 import Signup from "./pages/Signup";
+import ProfilesPage from "./pages/Profiles";
 
 
 const rootRoute = createRootRoute({
@@ -27,6 +28,12 @@ const homeRoute = createRoute({
     getParentRoute: () => landingLayoutRoute,
     path: '/',
     component: Home,
+})
+
+const profilesRoute = createRoute({
+    getParentRoute: () => landingLayoutRoute,
+    path: '/profiles',
+    component: ProfilesPage,
 })
 
 const authlayout = createRoute({
@@ -144,7 +151,7 @@ const publicProfileRoute = createRoute({
 })
 
 rootRoute.addChildren([
-    landingLayoutRoute.addChildren([homeRoute]),
+    landingLayoutRoute.addChildren([homeRoute, profilesRoute]),
     authlayout.addChildren([loginRoute, signupRoute]),
     onboardingRoute,
     dashboardLayoutRoute.addChildren([dashboardIndexRoute, profileRoute]),
