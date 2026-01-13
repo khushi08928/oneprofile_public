@@ -21,7 +21,7 @@ export function Navbar() {
 
                     <div className="flex items-center gap-6">
                         <Link
-                            to="/"
+                            to="/profiles"
                             className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                         >
                             <Users className="h-4 w-4" />
