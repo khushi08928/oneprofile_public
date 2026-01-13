@@ -114,7 +114,7 @@ export default function OnboardingFlow() {
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                             <span className="text-lg font-bold">O</span>
                         </div>
-                        <span className="text-xl font-semibold tracking-tight">OneURL</span>
+                        <span className="text-xl font-semibold tracking-tight">OneProfile</span>
                     </div>
                 </div>
 
