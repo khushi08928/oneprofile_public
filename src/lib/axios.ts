@@ -19,9 +19,9 @@ if (import.meta.env.VITE_BACKEND_URL) {
         if (config.url && config.url.startsWith('/api')) {
             const originalUrl = config.url;
             config.url = config.url.replace(/^\/api/, '/api/v1');
-            console.log('URL Rewrite:', originalUrl, '->', config.url);
+            // console.log('URL Rewrite:', originalUrl, '->', config.url);
         }
-        console.log('Final Request URL:', (config.baseURL || '') + (config.url || ''));
+        // console.log('Final Request URL:', (config.baseURL || '') + (config.url || ''));
         return config;
     });
 }
