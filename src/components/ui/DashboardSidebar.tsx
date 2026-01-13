@@ -115,24 +115,25 @@ export function DashboardSidebar() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                         <span className="text-lg font-bold">O</span>
                     </div>
-                    <span className="text-xl font-semibold tracking-tight">OneURL</span>
+                    <span className="text-xl font-semibold tracking-tight">OneProfile</span>
                 </div>
             </SidebarHeader>
 
             {/* Main Navigation */}
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+                    {/* <SidebarGroupLabel>Navigation</SidebarGroupLabel> */}
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarMenuItem>
+                            <SidebarMenuItem className="mb-2 mt-6">
                                 <SidebarMenuButton
                                     onClick={() => {
                                         // @ts-expect-error - Route types
                                         navigate({ to: "/dashboard" });
                                         setCurrentPath("/dashboard");
                                     }}
-                                    className={isActive("/dashboard") ? "bg-accent text-primary hover:bg-accent/80" : ""}
+                                    isActive={isActive("/dashboard")}
+                                    style={{ backgroundColor: isActive("/dashboard") ? 'hsl(240 3.7% 15.9%)' : 'transparent', color: isActive("/dashboard") ? 'hsl(240 4.8% 95.9%)' : 'inherit' }}
                                 >
                                     <Home className="h-4 w-4" />
                                     <span>Dashboard</span>
@@ -145,7 +146,8 @@ export function DashboardSidebar() {
                                         navigate({ to: "/dashboard/profile" });
                                         setCurrentPath("/dashboard/profile");
                                     }}
-                                    className={isActive("/dashboard/profile") ? "bg-accent text-primary hover:bg-accent/80" : ""}
+                                    isActive={isActive("/dashboard/profile")}
+                                    style={{ backgroundColor: isActive("/dashboard/profile") ? 'hsl(240 3.7% 15.9%)' : 'transparent', color: isActive("/dashboard/profile") ? 'hsl(240 4.8% 95.9%)' : 'inherit' }}
                                 >
                                     <User className="h-4 w-4" />
                                     <span>Profile</span>

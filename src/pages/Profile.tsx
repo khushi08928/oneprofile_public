@@ -1,4 +1,3 @@
-import { AddEducation } from "@/components/profile/AddEducation";
 import { AddLink } from "@/components/profile/AddLink";
 import { AddProject } from "@/components/profile/AddProject";
 import { ProfileInfo } from "@/components/profile/ProfileInfo";
@@ -17,16 +16,13 @@ export default function Profile() {
             {/* Profile Info */}
             <ProfileInfo />
 
-            {/* Three Column Layout for Add Buttons */}
-            <div className="grid gap-4 lg:grid-cols-3">
+            {/* Two Column Layout for Add Buttons */}
+            <div className="grid gap-4 lg:grid-cols-2">
                 {/* Add Link */}
                 <AddLink />
 
                 {/* Add Project */}
                 <AddProject />
-
-                {/* Add Education */}
-                <AddEducation />
             </div>
         </div>
     );

@@ -20,7 +20,7 @@ export default function LandingPage() {
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
               <span className="bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-                One URL for
+                One Profile for
               </span>
               <br />
               <span className="bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60 bg-clip-text text-transparent">
@@ -41,16 +41,16 @@ export default function LandingPage() {
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
-              <Link to="/">
+              {/* <Link to="/">
                 <Button size="lg" variant="outline" className="border-border/50 hover:bg-secondary/50 transition-all duration-200">
                   View Profiles
                 </Button>
-              </Link>
+              </Link> */}
             </div>
           </div>
 
           {/* Features Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mt-20">
+          <div className="grid md:grid-cols-2 gap-6 mt-20">
             <FeatureCard
               icon={<Link2 className="h-6 w-6" />}
               title="Link Management"
@@ -61,11 +61,11 @@ export default function LandingPage() {
               title="Custom Profile"
               description="Claim your unique username and customize your bio and avatar to match your brand."
             />
-            <FeatureCard
+            {/* <FeatureCard
               icon={<BarChart3 className="h-6 w-6" />}
               title="Deep Analytics"
               description="Track clicks and view detailed insights to understand what your audience engages with."
-            />
+            /> */}
           </div>
 
           {/* How it Works */}

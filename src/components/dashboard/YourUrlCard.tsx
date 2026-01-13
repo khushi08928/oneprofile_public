@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "@/lib/axios";
-import { Check, Copy, Link as LinkIcon } from "lucide-react";
+import { Check, Copy, ExternalLink, Link as LinkIcon, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export function YourUrlCard() {
@@ -44,6 +44,31 @@ export function YourUrlCard() {
         }
     };
 
+    const handleShare = async () => {
+        const url = getProfileUrl();
+
+        // Check if Web Share API is available
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: "My OneURL Profile",
+                    text: "Check out my profile!",
+                    url: url,
+                });
+            } catch (error) {
+                // User cancelled or share failed
+                console.log("Share cancelled or failed:", error);
+            }
+        } else {
+            // Fallback to copy
+            handleCopy();
+        }
+    };
+
+    const handleOpen = () => {
+        window.open(getProfileUrl(), "_blank", "noopener,noreferrer");
+    };
+
     if (loading) {
         return (
             <Card>
@@ -81,38 +106,57 @@ export function YourUrlCard() {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-3">
-                    {/* URL Display */}
-                    <div className="flex items-center gap-2 p-3 bg-accent/50 rounded-lg border border-border/50">
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-mono truncate">
-                                {getProfileUrl()}
-                            </p>
+                <div className="space-y-4">
+                    {/* URL Display with Copy Button */}
+                    <div className="space-y-2">
+                        <div className="flex items-center gap-2 p-3 bg-accent/30 rounded-lg border border-border/50">
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-mono truncate font-medium">
+                                    {getProfileUrl()}
+                                </p>
+                            </div>
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                onClick={handleCopy}
+                                className="flex-shrink-0 h-8 hover:bg-accent"
+                                style={{ backgroundColor: 'transparent' }}
+                            >
+                                {copied ? (
+                                    <>
+                                        <Check className="h-4 w-4 text-green-500" />
+                                    </>
+                                ) : (
+                                    <>
+                                        <Copy className="h-4 w-4" />
+                                    </>
+                                )}
+                            </Button>
                         </div>
-                        <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={handleCopy}
-                            className="flex-shrink-0"
-                        >
-                            {copied ? (
-                                <>
-                                    <Check className="h-4 w-4 mr-1 text-green-500" />
-                                    Copied
-                                </>
-                            ) : (
-                                <>
-                                    <Copy className="h-4 w-4 mr-1" />
-                                    Copy
-                                </>
-                            )}
-                        </Button>
+                        <p className="text-xs text-muted-foreground">
+                            Share this link to let others view your profile
+                        </p>
                     </div>
 
-                    {/* Info Text */}
-                    <p className="text-xs text-muted-foreground">
-                        Share this link to let others view your profile
-                    </p>
+                    {/* Action Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
+                        <Button
+                            variant="default"
+                            onClick={handleShare}
+                            className="w-full gap-2"
+                        >
+                            <Share2 className="h-4 w-4" />
+                            Share
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={handleOpen}
+                            className="w-full gap-2"
+                        >
+                            <ExternalLink className="h-4 w-4" />
+                            Open
+                        </Button>
+                    </div>
                 </div>
             </CardContent>
         </Card>

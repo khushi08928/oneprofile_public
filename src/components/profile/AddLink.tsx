@@ -45,7 +45,7 @@ function AddLinkDialog({
             case "linkedin":
                 return <Linkedin className="h-5 w-5 text-[#0A66C2]" />;
             case "github":
-                return <Github className="h-5 w-5" />;
+                return <Github className="h-5 w-5 text-foreground" />;
             case "instagram":
                 return <Instagram className="h-5 w-5 text-[#E4405F]" />;
             default:
@@ -95,7 +95,7 @@ function AddLinkDialog({
                     {/* URL Field */}
                     <div className="space-y-2">
                         <Label htmlFor="linkUrl">
-                            Profile URL <span className="text-destructive">*</span>
+                            Enter URL <span className="text-destructive">*</span>
                         </Label>
                         <Input
                             id="linkUrl"
