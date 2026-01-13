@@ -30,7 +30,13 @@ export function YourUrlCard() {
     }, []);
 
     const getProfileUrl = () => {
-        const baseUrl = import.meta.env.VITE_APP_URL || "http://localhost:5173";
+        let baseUrl = import.meta.env.VITE_APP_URL || "http://localhost:5173";
+        // Remove trailing slash if present
+        baseUrl = baseUrl.replace(/\/$/, '');
+        // If baseUrl already contains the protocol, use it as is, otherwise add it
+        if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+            baseUrl = `https://${baseUrl}`;
+        }
         return `${baseUrl}/${username}`;
     };
 
