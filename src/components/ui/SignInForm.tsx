@@ -167,19 +167,23 @@ export default function SignInForm() {
                         </Button>
                     </form>
 
-                    {/* <div className="relative">
+                    <div className="relative">
                         <div className="absolute inset-0 flex items-center">
                             <span className="w-full border-t border-border/50" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
                             <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
                         </div>
-                    </div> */}
+                    </div>
 
-                    {/* <Button
+                    <Button
                         variant="outline"
                         className="w-full border-border/50 hover:bg-secondary/50 transition-all duration-200"
                         type="button"
+                        onClick={() => {
+                            const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
+                            window.location.href = `${backendUrl}/api/v1/auth/google`;
+                        }}
                     >
                         <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                             <path
@@ -200,7 +204,7 @@ export default function SignInForm() {
                             />
                         </svg>
                         Sign in with Google
-                    </Button> */}
+                    </Button>
 
                     <p className="text-center text-sm text-muted-foreground">
                         Don't have an account?{" "}
