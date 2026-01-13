@@ -20,8 +20,9 @@ export function Navbar() {
                     {/* Navigation Links */}
 
                     <div className="flex items-center gap-6">
+
                         <Link
-                            to="/profiles"
+                            to={"/profiles" as any}
                             className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
                         >
                             <Users className="h-4 w-4" />
