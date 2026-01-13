@@ -1,7 +1,7 @@
 import { LinksCard } from "@/components/dashboard/LinksCard";
 import { ProjectsCard } from "@/components/dashboard/ProjectsCard";
 import { YourUrlCard } from "@/components/dashboard/YourUrlCard";
-import { Sparkles } from "lucide-react";
+// import { Sparkles } from "lucide-react";
 
 export default function Dashboard() {
     return (
