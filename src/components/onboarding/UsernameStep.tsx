@@ -8,7 +8,6 @@ interface UsernameStepProps {
     setUsername: (value: string) => void;
     isUsernameAvailable: boolean | null;
     isCheckingUsername: boolean;
-    checkUsernameAvailability: () => Promise<void>;
     onContinue: () => void;
     onBack?: () => void;
 }
@@ -18,7 +17,6 @@ export default function UsernameStep({
     setUsername,
     isUsernameAvailable,
     isCheckingUsername,
-    checkUsernameAvailability,
     onContinue,
 }: UsernameStepProps) {
     const appUrl = import.meta.env.VITE_APP_URL || "oneurl.live";
@@ -46,7 +44,6 @@ export default function UsernameStep({
                         onChange={(e) => {
                             setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, ""));
                         }}
-                        onBlur={checkUsernameAvailability}
                         className="bg-background/50 border-border/50 focus:border-primary transition-colors pr-10"
                     />
                     {isCheckingUsername && (
@@ -78,7 +75,12 @@ export default function UsernameStep({
             <div className="flex justify-center pt-4">
                 <Button
                     onClick={onContinue}
-                    disabled={!isUsernameAvailable}
+                    disabled={
+                        !username ||
+                        username.length < 3 ||
+                        isCheckingUsername ||
+                        isUsernameAvailable !== true
+                    }
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-8"
                 >
                     Continue
