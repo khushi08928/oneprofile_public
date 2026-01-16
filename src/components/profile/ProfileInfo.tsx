@@ -144,11 +144,11 @@ export function ProfileInfo() {
                             {getInitials(profile.displayName || profile.username || "U")}
                         </AvatarFallback>
                     </Avatar>
-                    {isEditing && (
+                    {/* {isEditing && (
                         <Button variant="outline" size="sm">
                             Change Avatar
                         </Button>
-                    )}
+                    )} */}
                 </div>
 
                 {/* Display Name */}
