@@ -112,12 +112,12 @@ export function YourUrlCard() {
                 </CardTitle>
             </CardHeader>
             <CardContent>
-                <div className="space-y-4">
+                <div className="space-y-3 sm:space-y-4">
                     {/* URL Display with Copy Button */}
                     <div className="space-y-2">
-                        <div className="flex items-center gap-2 p-3 bg-accent/30 rounded-lg border border-border/50">
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm font-mono truncate font-medium">
+                        <div className="flex items-center gap-2 p-2.5 sm:p-3 bg-accent/30 rounded-lg border border-border/50">
+                            <div className="flex-1 min-w-0 overflow-hidden">
+                                <p className="text-xs sm:text-sm font-mono font-medium break-all">
                                     {getProfileUrl()}
                                 </p>
                             </div>
@@ -125,16 +125,16 @@ export function YourUrlCard() {
                                 size="sm"
                                 variant="ghost"
                                 onClick={handleCopy}
-                                className="flex-shrink-0 h-8 hover:bg-accent"
+                                className="flex-shrink-0 h-7 sm:h-8 hover:bg-accent"
                                 style={{ backgroundColor: 'transparent' }}
                             >
                                 {copied ? (
                                     <>
-                                        <Check className="h-4 w-4 text-green-500" />
+                                        <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
                                     </>
                                 ) : (
                                     <>
-                                        <Copy className="h-4 w-4" />
+                                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                                     </>
                                 )}
                             </Button>
@@ -145,21 +145,21 @@ export function YourUrlCard() {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                         <Button
                             variant="default"
                             onClick={handleShare}
-                            className="w-full gap-2"
+                            className="w-full gap-1.5 sm:gap-2 text-sm"
                         >
-                            <Share2 className="h-4 w-4" />
+                            <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             Share
                         </Button>
                         <Button
                             variant="outline"
                             onClick={handleOpen}
-                            className="w-full gap-2"
+                            className="w-full gap-1.5 sm:gap-2 text-sm"
                         >
-                            <ExternalLink className="h-4 w-4" />
+                            <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                             Open
                         </Button>
                     </div>
