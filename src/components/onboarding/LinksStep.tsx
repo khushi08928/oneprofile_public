@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Github, Instagram, Linkedin, Link as LinkIcon, Plus, X } from "lucide-react";
-import React from "react";
+import axios from "@/lib/axios";
+import { AlertCircle, CheckCircle2, Github, Instagram, Linkedin, Link as LinkIcon, Loader2, Plus, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 interface SocialLink {
@@ -11,6 +12,16 @@ interface SocialLink {
     url: string;
     platform?: string;
     showIcon: boolean;
+    faviconUrl?: string;
+}
+
+interface ValidationState {
+    isValidating: boolean;
+    isValid: boolean | null;
+    message: string;
+    faviconUrl?: string;
+    fallbackUrls?: string[];
+    currentFaviconIndex?: number;
 }
 
 interface LinksStepProps {
@@ -26,11 +37,30 @@ export default function LinksStep({
     onContinue,
     onBack,
 }: LinksStepProps) {
-    const [showAddLinkDialog, setShowAddLinkDialog] = React.useState(false);
-    const [newLinkTitle, setNewLinkTitle] = React.useState("");
-    const [newLinkUrl, setNewLinkUrl] = React.useState("");
-    const [showIcon, setShowIcon] = React.useState(true);
-    const [duplicateError, setDuplicateError] = React.useState(false);
+    const [showAddLinkDialog, setShowAddLinkDialog] = useState(false);
+    const [newLinkTitle, setNewLinkTitle] = useState("");
+    const [newLinkUrl, setNewLinkUrl] = useState("");
+    const [showIcon, setShowIcon] = useState(true);
+    const [duplicateError, setDuplicateError] = useState(false);
+
+    // Validation state
+    const [validationState, setValidationState] = useState<ValidationState>({
+        isValidating: false,
+        isValid: null,
+        message: "",
+    });
+
+    // Debounce timer ref
+    const debounceTimerRef = useRef<number | null>(null);
+
+    // Cleanup timer on unmount
+    useEffect(() => {
+        return () => {
+            if (debounceTimerRef.current !== null) {
+                clearTimeout(debounceTimerRef.current);
+            }
+        };
+    }, []);
 
     const detectPlatform = (url: string): string | undefined => {
         if (url.includes("linkedin.com")) return "linkedin";
@@ -65,6 +95,82 @@ export default function LinksStep({
         }
     };
 
+    // Validate URL with backend and fetch favicon
+    const validateUrlWithBackend = async (url: string) => {
+        if (!url || url.length < 10) {
+            setValidationState({
+                isValidating: false,
+                isValid: null,
+                message: "",
+            });
+            return;
+        }
+
+        setValidationState({
+            isValidating: true,
+            isValid: null,
+            message: "Validating URL...",
+        });
+
+        try {
+            // First validate the URL
+            const validationResponse = await axios.post(
+                "/api/validate-url",
+                { url },
+                { withCredentials: true }
+            );
+
+            const result = validationResponse.data;
+
+            if (result.valid && result.reachable) {
+                // URL is valid, now fetch favicon
+                try {
+                    const faviconResponse = await axios.post(
+                        "/api/validate-url/favicon",
+                        { url },
+                        { withCredentials: true }
+                    );
+
+                    setValidationState({
+                        isValidating: false,
+                        isValid: true,
+                        message: "✓ URL is valid and reachable",
+                        faviconUrl: faviconResponse.data.faviconUrl,
+                        fallbackUrls: faviconResponse.data.fallbackUrls || [],
+                        currentFaviconIndex: 0,
+                    });
+                } catch (faviconError) {
+                    // If favicon fetch fails, still mark URL as valid
+                    console.error("Error fetching favicon:", faviconError);
+                    setValidationState({
+                        isValidating: false,
+                        isValid: true,
+                        message: "✓ URL is valid and reachable",
+                    });
+                }
+            } else if (result.valid && !result.reachable) {
+                setValidationState({
+                    isValidating: false,
+                    isValid: false,
+                    message: result.message || "URL is not reachable",
+                });
+            } else {
+                setValidationState({
+                    isValidating: false,
+                    isValid: false,
+                    message: result.message || "Invalid URL format",
+                });
+            }
+        } catch (error) {
+            console.error("Error validating URL:", error);
+            setValidationState({
+                isValidating: false,
+                isValid: false,
+                message: "Failed to validate URL. Please try again.",
+            });
+        }
+    };
+
     const addLink = () => {
         if (!newLinkUrl) return;
 
@@ -84,12 +190,18 @@ export default function LinksStep({
                 url: newLinkUrl,
                 platform,
                 showIcon,
+                faviconUrl: validationState.faviconUrl,
             },
         ]);
         setNewLinkTitle("");
         setNewLinkUrl("");
         setShowIcon(true);
         setDuplicateError(false);
+        setValidationState({
+            isValidating: false,
+            isValid: null,
+            message: "",
+        });
         setShowAddLinkDialog(false);
     };
 
@@ -111,6 +223,16 @@ export default function LinksStep({
         if (duplicateError) {
             setDuplicateError(false);
         }
+
+        // Clear existing timer
+        if (debounceTimerRef.current !== null) {
+            clearTimeout(debounceTimerRef.current);
+        }
+
+        // Set new timer for validation
+        debounceTimerRef.current = window.setTimeout(() => {
+            validateUrlWithBackend(value);
+        }, 500); // 500ms debounce
     };
 
     // Dialog component that renders in a portal
@@ -182,37 +304,84 @@ export default function LinksStep({
                     {/* URL Field */}
                     <div className="space-y-2">
                         <Label htmlFor="linkUrl">Profile URL</Label>
-                        <Input
-                            id="linkUrl"
-                            type="url"
-                            placeholder="example.com or https://yo"
-                            value={newLinkUrl}
-                            onChange={(e) => handleUrlChange(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter" && newLinkUrl) {
-                                    addLink();
+                        <div className="relative">
+                            <Input
+                                id="linkUrl"
+                                type="url"
+                                placeholder="example.com or https://yo"
+                                value={newLinkUrl}
+                                onChange={(e) => handleUrlChange(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === "Enter" && newLinkUrl && validationState.isValid === true) {
+                                        addLink();
+                                    }
+                                }}
+                                className={
+                                    validationState.isValid === false
+                                        ? "border-destructive focus-visible:ring-destructive pr-10"
+                                        : validationState.isValid === true
+                                            ? "border-green-500 focus-visible:ring-green-500 pr-10"
+                                            : "pr-10"
                                 }
-                            }}
-                            className={`bg-background/50 border-border/50 focus:border-primary transition-colors ${duplicateError ? "border-destructive focus:border-destructive" : ""
-                                }`}
-                        />
+                            />
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                {validationState.isValidating && (
+                                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                )}
+                                {!validationState.isValidating && validationState.isValid === true && (
+                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
+                                )}
+                                {!validationState.isValidating && validationState.isValid === false && (
+                                    <AlertCircle className="h-4 w-4 text-destructive" />
+                                )}
+                            </div>
+                        </div>
                         {duplicateError && (
                             <p className="text-xs text-destructive flex items-center gap-1 animate-in slide-in-from-top-1 duration-200">
                                 <X className="h-3 w-3" />
                                 This link has already been added!
                             </p>
                         )}
+                        {validationState.message && (
+                            <p
+                                className={`text-xs flex items-center gap-1 ${validationState.isValid === false
+                                    ? "text-destructive"
+                                    : validationState.isValid === true
+                                        ? "text-green-600"
+                                        : "text-muted-foreground"
+                                    }`}
+                            >
+                                {validationState.message}
+                            </p>
+                        )}
                     </div>
 
                     {/* Preview Section */}
-                    {newLinkUrl && (
+                    {newLinkUrl && validationState.isValid && validationState.faviconUrl && (
                         <div className="space-y-2">
                             <Label className="text-xs text-muted-foreground">Preview</Label>
                             <div className="p-4 bg-background/50 rounded-lg border border-border/50 animate-in slide-in-from-top-2 duration-200">
                                 <div className="flex items-center gap-3">
-                                    {showIcon && (
+                                    {showIcon && validationState.faviconUrl && (
                                         <div className="flex-shrink-0">
-                                            {getPlatformIcon(detectPlatform(newLinkUrl))}
+                                            <img
+                                                src={validationState.faviconUrl}
+                                                alt="Favicon"
+                                                className="h-5 w-5 rounded object-cover"
+                                                onError={(e) => {
+                                                    // Try fallback URLs if available
+                                                    const currentIndex = validationState.currentFaviconIndex || 0;
+                                                    const fallbacks = validationState.fallbackUrls || [];
+
+                                                    if (currentIndex < fallbacks.length) {
+                                                        // Try next fallback
+                                                        e.currentTarget.src = fallbacks[currentIndex];
+                                                    } else {
+                                                        // All fallbacks failed, hide the image
+                                                        e.currentTarget.style.display = 'none';
+                                                    }
+                                                }}
+                                            />
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
@@ -224,12 +393,6 @@ export default function LinksStep({
                                         </p>
                                     </div>
                                 </div>
-                                {detectPlatform(newLinkUrl) && (
-                                    <p className="text-xs text-primary mt-2 flex items-center gap-1">
-                                        <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                        Platform detected: {getPlatformName(detectPlatform(newLinkUrl))}
-                                    </p>
-                                )}
                             </div>
                         </div>
                     )}
@@ -250,7 +413,7 @@ export default function LinksStep({
                         </Button>
                         <Button
                             onClick={addLink}
-                            disabled={!newLinkUrl}
+                            disabled={!newLinkUrl || validationState.isValidating || validationState.isValid !== true}
                             className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                         >
                             Add Link
