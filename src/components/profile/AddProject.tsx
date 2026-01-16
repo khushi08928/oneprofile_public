@@ -76,7 +76,9 @@ function AddProjectDialog({
 
                     {/* Project Description */}
                     <div className="space-y-2">
-                        <Label htmlFor="projectDescription">Description</Label>
+                        <Label htmlFor="projectDescription">
+                            Description <span className="text-destructive">*</span>
+                            </Label>
                         <Textarea
                             id="projectDescription"
                             value={formData.projectDescription}
@@ -86,6 +88,7 @@ function AddProjectDialog({
                                     projectDescription: e.target.value,
                                 })
                             }
+                            required
                             placeholder="Brief description of your project..."
                             rows={3}
                             
@@ -94,7 +97,9 @@ function AddProjectDialog({
 
                     {/* Tech Stack */}
                     <div className="space-y-2">
-                        <Label htmlFor="techStack">Tech Stack</Label>
+                        <Label htmlFor="techStack">
+                            Tech Stack <span className="text-destructive">*</span>
+                            </Label>
                         <Input
                             id="techStack"
                             value={formData.techStack}
@@ -102,6 +107,7 @@ function AddProjectDialog({
                                 setFormData({ ...formData, techStack: e.target.value })
                             }
                             placeholder="React, Node.js, MongoDB"
+                            required
                         />
                         <p className="text-xs text-muted-foreground">
                             Separate technologies with commas
