@@ -12,19 +12,28 @@ const axiosInstance = baseAxios.create({
 //     hasBackendUrl: !!import.meta.env.VITE_BACKEND_URL
 // });
 
-// In production (when VITE_BACKEND_URL is set), rewrite /api to /api/v1
-// In development, the Vite proxy handles this rewrite
-if (import.meta.env.VITE_BACKEND_URL) {
-    axiosInstance.interceptors.request.use((config) => {
+// Add cache-busting headers to prevent caching of GET requests
+axiosInstance.interceptors.request.use((config) => {
+    // Prevent caching for GET requests (important for username validation)
+    if (config.method === 'get') {
+        config.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate';
+        config.headers['Pragma'] = 'no-cache';
+        config.headers['Expires'] = '0';
+    }
+
+    // In production (when VITE_BACKEND_URL is set), rewrite /api to /api/v1
+    // In development, the Vite proxy handles this rewrite
+    if (import.meta.env.VITE_BACKEND_URL) {
         if (config.url && config.url.startsWith('/api')) {
             // const originalUrl = config.url;
             config.url = config.url.replace(/^\/api/, '/api/v1');
             // console.log('URL Rewrite:', originalUrl, '->', config.url);
         }
-        // console.log('Final Request URL:', (config.baseURL || '') + (config.url || ''));
-        return config;
-    });
-}
+    }
+
+    // console.log('Final Request URL:', (config.baseURL || '') + (config.url || ''));
+    return config;
+});
 
 // Export the isAxiosError utility
 export const isAxiosError = baseAxios.isAxiosError;
