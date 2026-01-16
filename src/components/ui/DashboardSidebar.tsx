@@ -110,22 +110,22 @@ export function DashboardSidebar() {
     return (
         <Sidebar>
             {/* Header with Logo */}
-            <SidebarHeader className="border-b border-border/50 p-4">
+            <SidebarHeader className="border-b border-border/50 p-3 sm:p-4 flex-shrink-0">
                 <div className="flex items-center space-x-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <span className="text-lg font-bold">O</span>
+                    <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                        <span className="text-base sm:text-lg font-bold">O</span>
                     </div>
-                    <span className="text-xl font-semibold tracking-tight">OneProfile</span>
+                    <span className="text-lg sm:text-xl font-semibold tracking-tight">OneProfile</span>
                 </div>
             </SidebarHeader>
 
             {/* Main Navigation */}
-            <SidebarContent>
+            <SidebarContent className="flex-1 overflow-y-auto">
                 <SidebarGroup>
                     {/* <SidebarGroupLabel>Navigation</SidebarGroupLabel> */}
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            <SidebarMenuItem className="mb-2 mt-6">
+                            <SidebarMenuItem className="mb-2 mt-2">
                                 <SidebarMenuButton
                                     onClick={() => {
                                         // @ts-expect-error - Route types
@@ -159,19 +159,19 @@ export function DashboardSidebar() {
             </SidebarContent>
 
             {/* Footer with User Info and Logout */}
-            <SidebarFooter className="border-t border-border/50 p-4">
-                <div className="space-y-3">
+            <SidebarFooter className="border-t border-border/50 p-3 sm:p-4 flex-shrink-0 mt-auto">
+                <div className="space-y-2 sm:space-y-3">
                     {/* User Info */}
                     {user && (
-                        <div className="flex items-center gap-3 px-2 py-1.5 rounded-lg bg-background/50">
-                            <Avatar className="h-8 w-8">
-                                <AvatarFallback className="bg-primary text-primary-foreground text-sm font-semibold">
+                        <div className="flex items-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1.5 rounded-lg bg-background/50">
+                            <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
+                                <AvatarFallback className="bg-primary text-primary-foreground text-xs sm:text-sm font-semibold">
                                     {getUserInitials(user.name)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{user.name}</p>
-                                <p className="text-xs text-muted-foreground truncate">
+                                <p className="text-xs sm:text-sm font-medium truncate">{user.name}</p>
+                                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
                                     {user.email}
                                 </p>
                             </div>
@@ -183,9 +183,9 @@ export function DashboardSidebar() {
                         onClick={handleLogout}
                         disabled={isLoggingOut}
                         variant="outline"
-                        className="w-full gap-2 text-destructive hover:text-destructive hover:bg-destructive/10 border-none"
+                        className="w-full gap-1.5 sm:gap-2 text-xs sm:text-sm text-destructive hover:text-destructive hover:bg-destructive/10 border-none"
                     >
-                        <LogOut className="h-4 w-4" />
+                        <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         {isLoggingOut ? "Logging out..." : "Logout"}
                     </Button>
                 </div>

@@ -106,25 +106,25 @@ export default function OnboardingFlow() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center px-6 py-8">
+        <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
             <div className="w-full max-w-2xl">
                 {/* Header */}
-                <div className="flex items-center justify-between mb-8">
+                <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div className="flex items-center space-x-2">
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                             <span className="text-lg font-bold">O</span>
                         </div>
-                        <span className="text-xl font-semibold tracking-tight">OneProfile</span>
+                        <span className="text-lg sm:text-xl font-semibold tracking-tight">OneProfile</span>
                     </div>
                 </div>
 
                 {/* Progress Steps */}
-                <div className="flex items-center justify-between mb-12">
+                <div className="flex items-center justify-between mb-8 sm:mb-12">
                     {steps.map((step, index) => (
                         <div key={step.id} className="flex items-center flex-1">
                             <div className="flex flex-col items-center flex-1">
                                 <div
-                                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${index < currentStepIndex
+                                    className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-all ${index < currentStepIndex
                                         ? "bg-primary border-primary text-primary-foreground"
                                         : index === currentStepIndex
                                             ? "border-primary text-primary"
@@ -132,13 +132,13 @@ export default function OnboardingFlow() {
                                         }`}
                                 >
                                     {index < currentStepIndex ? (
-                                        <Check className="h-5 w-5" />
+                                        <Check className="h-4 w-4 sm:h-5 sm:w-5" />
                                     ) : (
-                                        <span className="font-semibold">{step.number}</span>
+                                        <span className="text-sm sm:text-base font-semibold">{step.number}</span>
                                     )}
                                 </div>
                                 <span
-                                    className={`mt-2 text-xs font-medium ${index <= currentStepIndex ? "text-foreground" : "text-muted-foreground"
+                                    className={`mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-medium ${index <= currentStepIndex ? "text-foreground" : "text-muted-foreground"
                                         }`}
                                 >
                                     {step.label}
@@ -146,7 +146,7 @@ export default function OnboardingFlow() {
                             </div>
                             {index < steps.length - 1 && (
                                 <div
-                                    className={`h-0.5 flex-1 mx-2 transition-all ${index < currentStepIndex ? "bg-primary" : "bg-border"
+                                    className={`h-0.5 flex-1 mx-1 sm:mx-2 transition-all ${index < currentStepIndex ? "bg-primary" : "bg-border"
                                         }`}
                                 />
                             )}
@@ -155,7 +155,7 @@ export default function OnboardingFlow() {
                 </div>
 
                 {/* Step Content */}
-                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-8">
+                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-6 md:p-8">
                     {currentStep === "username" && (
                         <UsernameStep
                             username={username}

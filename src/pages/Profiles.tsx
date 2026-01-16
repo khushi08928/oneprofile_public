@@ -48,18 +48,18 @@ export default function ProfilesPage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-primary/5">
-            <div className="container mx-auto px-6 py-24 max-w-6xl">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 md:py-24 max-w-6xl">
                 {/* Header */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="text-center mb-12"
+                    className="text-center mb-8 sm:mb-10 md:mb-12"
                 >
-                    <h1 className="text-4xl font-bold tracking-tight mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-2 sm:mb-3 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
                         Discover Profiles
                     </h1>
-                    <p className="text-muted-foreground text-lg">
+                    <p className="text-muted-foreground text-base sm:text-lg">
                         Explore profiles created by our community
                     </p>
                 </motion.div>

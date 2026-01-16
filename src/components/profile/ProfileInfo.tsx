@@ -100,37 +100,37 @@ export function ProfileInfo() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                    <span>Profile Information</span>
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+                    <span className="text-lg sm:text-xl">Profile Information</span>
                     {!isEditing ? (
                         <Button
                             size="sm"
                             variant="outline"
                             onClick={() => setIsEditing(true)}
-                            className="gap-1"
+                            className="gap-1 w-full sm:w-auto"
                         >
                             <Pencil className="h-4 w-4" />
-                            Edit
+                            <span>Edit</span>
                         </Button>
                     ) : (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto">
                             <Button
                                 size="sm"
                                 variant="outline"
                                 onClick={handleCancel}
-                                className="gap-1"
+                                className="gap-1 flex-1 sm:flex-none"
                             >
                                 <X className="h-4 w-4" />
-                                Cancel
+                                <span className="sm:inline">Cancel</span>
                             </Button>
                             <Button
                                 size="sm"
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="gap-1"
+                                className="gap-1 flex-1 sm:flex-none"
                             >
                                 <Save className="h-4 w-4" />
-                                {saving ? "Saving..." : "Save"}
+                                <span>{saving ? "Saving..." : "Save"}</span>
                             </Button>
                         </div>
                     )}
