@@ -52,6 +52,8 @@ export default function LinksStep({
 
     // Debounce timer ref
     const debounceTimerRef = useRef<number | null>(null);
+    // Input ref to maintain focus
+    const urlInputRef = useRef<HTMLInputElement>(null);
 
     // Cleanup timer on unmount
     useEffect(() => {
@@ -306,6 +308,7 @@ export default function LinksStep({
                         <Label htmlFor="linkUrl">Profile URL</Label>
                         <div className="relative">
                             <Input
+                                ref={urlInputRef}
                                 id="linkUrl"
                                 type="url"
                                 placeholder="example.com or https://yo"
@@ -316,6 +319,7 @@ export default function LinksStep({
                                         addLink();
                                     }
                                 }}
+                                autoFocus
                                 className={
                                     validationState.isValid === false
                                         ? "border-destructive focus-visible:ring-destructive pr-10"
