@@ -17,6 +17,7 @@ interface SocialLink {
     url: string;
     platform?: string;
     showIcon: boolean;
+    faviconUrl?: string;
 }
 
 export default function OnboardingFlow() {
@@ -82,6 +83,29 @@ export default function OnboardingFlow() {
             setIsCheckingUsername(false);
         }
     };
+
+    // Debounced username validation - validates automatically while typing
+    useEffect(() => {
+        if (!username || username.length < 3) {
+            setIsUsernameAvailable(null);
+            return;
+        }
+
+        // Debounce the validation to avoid excessive API calls
+        const timeoutId = setTimeout(() => {
+            checkUsernameAvailability();
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [username]);
+
+    // Re-validate when returning to username step
+    useEffect(() => {
+        if (currentStep === 'username' && username && username.length >= 3) {
+            // Re-check username availability when user returns to this step
+            checkUsernameAvailability();
+        }
+    }, [currentStep]);
 
     const handleFinish = async () => {
         try {
@@ -159,10 +183,13 @@ export default function OnboardingFlow() {
                     {currentStep === "username" && (
                         <UsernameStep
                             username={username}
-                            setUsername={setUsername}
+                            setUsername={(value) => {
+                                setUsername(value);
+                                // Reset validation state when username changes
+                                setIsUsernameAvailable(null);
+                            }}
                             isUsernameAvailable={isUsernameAvailable}
                             isCheckingUsername={isCheckingUsername}
-                            checkUsernameAvailability={checkUsernameAvailability}
                             onContinue={() => setCurrentStep("profile")}
                         />
                     )}
