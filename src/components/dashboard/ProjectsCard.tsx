@@ -41,10 +41,12 @@ export function ProjectsCard() {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-primary" />
-                    <span>My Projects</span>
-                    <span className="ml-auto text-sm font-normal text-muted-foreground">
+                <CardTitle className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+                    <div className="flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
+                        <span className="text-base sm:text-lg">My Projects</span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-normal text-muted-foreground sm:ml-auto">
                         {projects.length} {projects.length === 1 ? 'project' : 'projects'}
                     </span>
                 </CardTitle>
@@ -53,35 +55,35 @@ export function ProjectsCard() {
                 {loading ? (
                     <p className="text-sm text-muted-foreground">Loading projects...</p>
                 ) : projects.length === 0 ? (
-                    <div className="text-center py-12">
-                        <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-full bg-accent/50">
-                            <Briefcase className="h-8 w-8 text-muted-foreground" />
+                    <div className="text-center py-8 sm:py-12">
+                        <div className="flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 mx-auto mb-3 sm:mb-4 rounded-full bg-accent/50">
+                            <Briefcase className="h-7 w-7 sm:h-8 sm:w-8 text-muted-foreground" />
                         </div>
-                        <h3 className="font-semibold text-lg mb-1">No projects yet</h3>
-                        <p className="text-sm text-muted-foreground mb-4">
+                        <h3 className="font-semibold text-base sm:text-lg mb-1">No projects yet</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 px-4">
                             Showcase your work by adding your first project
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">
                             Go to Profile page to get started
                         </p>
                     </div>
                 ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-2.5 sm:space-y-3">
                         {projects.map((project) => (
                             <div
                                 key={project.id}
-                                className="group p-4 rounded-lg border border-border/50 bg-card hover:border-primary/50 hover:bg-accent/30 hover:shadow-sm transition-all duration-200"
+                                className="group p-3 sm:p-4 rounded-lg border border-border/50 bg-card hover:border-primary/50 hover:bg-accent/30 hover:shadow-sm transition-all duration-200"
                             >
-                                <div className="space-y-3">
+                                <div className="space-y-2 sm:space-y-3">
                                     <div className="flex items-start justify-between gap-2">
-                                        <h4 className="font-semibold text-base group-hover:text-primary transition-colors">
+                                        <h4 className="font-semibold text-sm sm:text-base group-hover:text-primary transition-colors">
                                             {project.projectTitle}
                                         </h4>
-                                        <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                                        <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
                                     </div>
 
                                     {project.projectDescription && (
-                                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                                        <p className="text-xs sm:text-sm text-muted-foreground leading-relaxed line-clamp-2">
                                             {project.projectDescription}
                                         </p>
                                     )}
@@ -91,7 +93,7 @@ export function ProjectsCard() {
                                             {project.techStack.map((tech, index) => (
                                                 <span
                                                     key={index}
-                                                    className="text-xs px-2.5 py-1 rounded-md bg-primary/5 text-primary border border-primary/10 font-medium"
+                                                    className="text-[10px] sm:text-xs px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-primary/5 text-primary border border-primary/10 font-medium"
                                                 >
                                                     {tech}
                                                 </span>
