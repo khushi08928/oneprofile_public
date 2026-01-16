@@ -3,8 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import axios from "@/lib/axios";
-import { AlertCircle, Briefcase, CheckCircle2, Loader2, Plus, X } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Briefcase, Plus, X } from "lucide-react";
+import { useState } from "react";
 import { createPortal } from "react-dom";
 import { toast } from "sonner";
 
@@ -15,13 +15,6 @@ interface ProjectFormData {
     projectLink: string;
 }
 
-interface ValidationState {
-    isValidating: boolean;
-    isValid: boolean | null;
-    message: string;
-    faviconUrl?: string;
-}
-
 interface AddProjectDialogProps {
     open: boolean;
     onClose: () => void;
@@ -29,8 +22,6 @@ interface AddProjectDialogProps {
     setFormData: (data: ProjectFormData) => void;
     saving: boolean;
     handleSubmit: (e: React.FormEvent) => void;
-    validationState: ValidationState;
-    onUrlChange: (url: string) => void;
 }
 
 function AddProjectDialog({
@@ -40,8 +31,6 @@ function AddProjectDialog({
     setFormData,
     saving,
     handleSubmit,
-    validationState,
-    onUrlChange,
 }: AddProjectDialogProps) {
     if (!open) return null;
 
@@ -99,6 +88,7 @@ function AddProjectDialog({
                             }
                             placeholder="Brief description of your project..."
                             rows={3}
+                            
                         />
                     </div>
 
@@ -123,78 +113,17 @@ function AddProjectDialog({
                         <Label htmlFor="projectLink">
                             Project Link <span className="text-destructive">*</span>
                         </Label>
-                        <div className="relative">
-                            <Input
-                                id="projectLink"
-                                type="url"
-                                value={formData.projectLink}
-                                onChange={(e) => onUrlChange(e.target.value)}
-                                placeholder="https://github.com/username/project"
-                                required
-                                className={
-                                    validationState.isValid === false
-                                        ? "border-destructive focus-visible:ring-destructive pr-10"
-                                        : validationState.isValid === true
-                                            ? "border-green-500 focus-visible:ring-green-500 pr-10"
-                                            : "pr-10"
-                                }
-                            />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {validationState.isValidating && (
-                                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                                )}
-                                {!validationState.isValidating && validationState.isValid === true && (
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                )}
-                                {!validationState.isValidating && validationState.isValid === false && (
-                                    <AlertCircle className="h-4 w-4 text-destructive" />
-                                )}
-                            </div>
-                        </div>
-                        {validationState.message && (
-                            <p
-                                className={`text-xs flex items-center gap-1 ${validationState.isValid === false
-                                        ? "text-destructive"
-                                        : validationState.isValid === true
-                                            ? "text-green-600"
-                                            : "text-muted-foreground"
-                                    }`}
-                            >
-                                {validationState.message}
-                            </p>
-                        )}
+                        <Input
+                            id="projectLink"
+                            type="url"
+                            value={formData.projectLink}
+                            onChange={(e) => setFormData({ ...formData, projectLink: e.target.value })}
+                            placeholder="https://github.com/username/project"
+                            required
+                        />
                     </div>
 
-                    {/* Preview Section */}
-                    {formData.projectLink && validationState.isValid && validationState.faviconUrl && (
-                        <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">Preview</Label>
-                            <div className="p-3 bg-background/50 rounded-lg border border-border/50">
-                                <div className="flex items-center gap-3">
-                                    {validationState.faviconUrl && (
-                                        <div className="flex-shrink-0">
-                                            <img
-                                                src={validationState.faviconUrl}
-                                                alt="Favicon"
-                                                className="h-5 w-5 rounded"
-                                                onError={(e) => {
-                                                    e.currentTarget.style.display = 'none';
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium truncate">
-                                            {formData.projectTitle || "Project"}
-                                        </p>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            {formData.projectLink}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+
 
                     {/* Actions */}
                     <div className="flex gap-2 pt-2">
@@ -208,7 +137,7 @@ function AddProjectDialog({
                         </Button>
                         <Button
                             type="submit"
-                            disabled={saving || validationState.isValidating || validationState.isValid !== true}
+                            disabled={saving}
                             className="flex-1"
                         >
                             {saving ? "Adding..." : "Add Project"}
@@ -230,116 +159,6 @@ export function AddProject() {
         projectLink: "",
     });
     const [saving, setSaving] = useState(false);
-    const [validationState, setValidationState] = useState<ValidationState>({
-        isValidating: false,
-        isValid: null,
-        message: "",
-    });
-
-    // Debounce timer ref
-    const debounceTimerRef = useRef<number | null>(null);
-
-    // Validate URL with backend and fetch favicon
-    const validateUrlWithBackend = async (url: string) => {
-        if (!url || url.length < 10) {
-            setValidationState({
-                isValidating: false,
-                isValid: null,
-                message: "",
-            });
-            return;
-        }
-
-        setValidationState({
-            isValidating: true,
-            isValid: null,
-            message: "Validating URL...",
-        });
-
-        try {
-            // First validate the URL
-            const validationResponse = await axios.post(
-                "/api/validate-url",
-                { url },
-                { withCredentials: true }
-            );
-
-            const result = validationResponse.data;
-
-            if (result.valid && result.reachable) {
-                // URL is valid, now fetch favicon
-                try {
-                    const faviconResponse = await axios.post(
-                        "/api/validate-url/favicon",
-                        { url },
-                        { withCredentials: true }
-                    );
-
-                    setValidationState({
-                        isValidating: false,
-                        isValid: true,
-                        message: "✓ URL is valid and reachable",
-                        faviconUrl: faviconResponse.data.faviconUrl,
-                    });
-                } catch (faviconError) {
-                    // If favicon fetch fails, still mark URL as valid
-                    console.error("Error fetching favicon:", faviconError);
-                    setValidationState({
-                        isValidating: false,
-                        isValid: true,
-                        message: "✓ URL is valid and reachable",
-                    });
-                }
-            } else if (result.valid && !result.reachable) {
-                setValidationState({
-                    isValidating: false,
-                    isValid: false,
-                    message: result.message || "URL is not reachable",
-                });
-            } else {
-                setValidationState({
-                    isValidating: false,
-                    isValid: false,
-                    message: result.message || "Invalid URL format",
-                });
-            }
-        } catch (error) {
-            console.error("Error validating URL:", error);
-            setValidationState({
-                isValidating: false,
-                isValid: false,
-                message: "Failed to validate URL. Please try again.",
-            });
-        }
-    };
-
-    // Handle URL change with debouncing
-    const handleUrlChange = useCallback((url: string) => {
-        // Update form data immediately
-        setFormData((prev) => ({
-            ...prev,
-            projectLink: url,
-        }));
-
-        // Clear existing timer
-        if (debounceTimerRef.current !== null) {
-            clearTimeout(debounceTimerRef.current);
-        }
-
-        // Set new timer for validation
-        debounceTimerRef.current = window.setTimeout(() => {
-            validateUrlWithBackend(url);
-        }, 500); // 500ms debounce
-    }, []);
-
-    // Cleanup on unmount
-    useEffect(() => {
-        return () => {
-            if (debounceTimerRef.current !== null) {
-                clearTimeout(debounceTimerRef.current);
-            }
-        };
-    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -366,11 +185,6 @@ export function AddProject() {
                 projectDescription: "",
                 techStack: "",
                 projectLink: "",
-            });
-            setValidationState({
-                isValidating: false,
-                isValid: null,
-                message: "",
             });
             setShowDialog(false);
             toast.success("Project added successfully!");
@@ -401,8 +215,6 @@ export function AddProject() {
                 setFormData={setFormData}
                 saving={saving}
                 handleSubmit={handleSubmit}
-                validationState={validationState}
-                onUrlChange={handleUrlChange}
             />
         </>
     );
