@@ -65,7 +65,7 @@ const TIME_RANGES = [
 function useAnimatedCounter(target: number, duration: number = 1200) {
     const [value, setValue] = useState(0);
     const startTime = useRef<number | null>(null);
-    const animationRef = useRef<number>();
+    const animationRef = useRef<number | undefined>(undefined);
 
     useEffect(() => {
         startTime.current = null;
@@ -152,16 +152,13 @@ const chartTooltipStyle = {
 export default function Analytics() {
     const [data, setData] = useState<AnalyticsData | null>(null);
     const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(false);
     const [days, setDays] = useState(7);
 
     useEffect(() => {
         const fetchAnalytics = async () => {
             // First load → full loading screen. Subsequent → subtle refresh
-            if (data) {
-                setRefreshing(true);
-            } else {
+            if (!data) {
                 setLoading(true);
             }
             setError(false);
@@ -177,7 +174,6 @@ export default function Analytics() {
                 setError(true);
             } finally {
                 setLoading(false);
-                setRefreshing(false);
             }
         };
 

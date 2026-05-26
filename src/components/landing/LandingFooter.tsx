@@ -1,4 +1,3 @@
-import { motion } from "framer-motion";
 import { Github, Twitter, Linkedin, Heart } from "lucide-react";
 
 export function LandingFooter() {

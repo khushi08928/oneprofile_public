@@ -5,7 +5,7 @@ import { YourUrlCard } from "@/components/dashboard/YourUrlCard";
 import Analytics from "./Analytics";
 import axios from "@/lib/axios";
 import { themes } from "@/lib/themes";
-import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useLocation } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Briefcase,
@@ -18,8 +18,7 @@ import {
     Settings2,
     Trash2,
     X,
-    Check,
-    AlertCircle
+    Check
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -54,7 +53,6 @@ interface ProfileData {
 
 export default function Dashboard() {
     const location = useLocation();
-    const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
     const activeTab = searchParams.get("tab") || "links";
 

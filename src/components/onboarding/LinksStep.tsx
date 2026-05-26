@@ -84,18 +84,6 @@ export default function LinksStep({
         }
     };
 
-    const getPlatformName = (platform?: string): string => {
-        switch (platform) {
-            case "linkedin":
-                return "LinkedIn";
-            case "github":
-                return "GitHub";
-            case "instagram":
-                return "Instagram";
-            default:
-                return "Website";
-        }
-    };
 
     // Validate URL with backend and fetch favicon
     const validateUrlWithBackend = async (url: string) => {

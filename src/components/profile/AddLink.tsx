@@ -46,63 +46,8 @@ function AddLinkDialog({
 }: AddLinkDialogProps) {
     if (!open) return null;
 
-    const detectPlatform = (url: string): string | undefined => {
-        if (url.includes("linkedin.com")) return "linkedin";
-        if (url.includes("github.com")) return "github";
-        if (url.includes("instagram.com")) return "instagram";
-        if (url.includes("twitter.com") || url.includes("x.com")) return "twitter";
-        if (url.includes("facebook.com")) return "facebook";
-        if (url.includes("youtube.com") || url.includes("youtu.be")) return "youtube";
-        if (url.includes("tiktok.com")) return "tiktok";
-        if (url.includes("discord.com") || url.includes("discord.gg")) return "discord";
-        if (url.includes("behance.net")) return "behance";
-        if (url.includes("dribbble.com")) return "dribbble";
-        if (url.includes("medium.com")) return "medium";
-        if (url.includes("dev.to")) return "devto";
-        if (url.includes("stackoverflow.com")) return "stackoverflow";
-        if (url.includes("reddit.com")) return "reddit";
-        if (url.includes("twitch.tv")) return "twitch";
-        return undefined;
-    };
 
-    const getPlatformName = (platform?: string): string => {
-        switch (platform) {
-            case "linkedin":
-                return "LinkedIn";
-            case "github":
-                return "GitHub";
-            case "instagram":
-                return "Instagram";
-            case "twitter":
-                return "X (Twitter)";
-            case "facebook":
-                return "Facebook";
-            case "youtube":
-                return "YouTube";
-            case "tiktok":
-                return "TikTok";
-            case "discord":
-                return "Discord";
-            case "behance":
-                return "Behance";
-            case "dribbble":
-                return "Dribbble";
-            case "medium":
-                return "Medium";
-            case "devto":
-                return "Dev.to";
-            case "stackoverflow":
-                return "Stack Overflow";
-            case "reddit":
-                return "Reddit";
-            case "twitch":
-                return "Twitch";
-            default:
-                return "Website";
-        }
-    };
 
-    const detectedPlatform = detectPlatform(formData.url);
 
     return createPortal(
         <div
@@ -292,42 +237,6 @@ export function AddLink({ onSuccess }: { onSuccess?: () => void }) {
         return undefined;
     };
 
-    const getPlatformName = (platform?: string): string => {
-        switch (platform) {
-            case "linkedin":
-                return "LinkedIn";
-            case "github":
-                return "GitHub";
-            case "instagram":
-                return "Instagram";
-            case "twitter":
-                return "X (Twitter)";
-            case "facebook":
-                return "Facebook";
-            case "youtube":
-                return "YouTube";
-            case "tiktok":
-                return "TikTok";
-            case "discord":
-                return "Discord";
-            case "behance":
-                return "Behance";
-            case "dribbble":
-                return "Dribbble";
-            case "medium":
-                return "Medium";
-            case "devto":
-                return "Dev.to";
-            case "stackoverflow":
-                return "Stack Overflow";
-            case "reddit":
-                return "Reddit";
-            case "twitch":
-                return "Twitch";
-            default:
-                return "Website";
-        }
-    };
 
     // Validate URL with backend and fetch favicon
     const validateUrlWithBackend = async (url: string) => {

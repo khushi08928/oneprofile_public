@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sidebar";
 import axios from "@/lib/axios";
 import { useNavigate, useLocation } from "@tanstack/react-router";
-import { BarChart3, LogOut, Palette, Link as LinkIcon, Briefcase } from "lucide-react";
+import { LogOut, Palette, Link as LinkIcon, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface UserData {
