@@ -43,15 +43,15 @@ function AddProjectDialog({
                 }
             }}
         >
-            <div className="bg-card border border-border rounded-lg p-6 w-full max-w-md space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-6 w-full max-w-md space-y-4 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] animate-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                        <Briefcase className="h-5 w-5" />
+                    <h3 className="text-lg font-black text-[#2C3947] flex items-center gap-2">
+                        <Briefcase className="h-5 w-5 text-[#2C3947]" />
                         Add New Project
                     </h3>
                     <button
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-[#2C3947]/60 hover:text-[#2C3947] transition-colors bg-transparent p-0"
                     >
                         <X className="h-5 w-5" />
                     </button>
@@ -60,8 +60,8 @@ function AddProjectDialog({
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Project Title */}
                     <div className="space-y-2">
-                        <Label htmlFor="projectTitle">
-                            Project Title <span className="text-destructive">*</span>
+                        <Label htmlFor="projectTitle" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Project Title <span className="text-red-500">*</span>
                         </Label>
                         <Input
                             id="projectTitle"
@@ -71,14 +71,15 @@ function AddProjectDialog({
                             }
                             placeholder="My Awesome Project"
                             required
+                            className="border-2 border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0 rounded-xl h-10 transition-all"
                         />
                     </div>
 
                     {/* Project Description */}
                     <div className="space-y-2">
-                        <Label htmlFor="projectDescription">
-                            Description <span className="text-destructive">*</span>
-                            </Label>
+                        <Label htmlFor="projectDescription" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Description <span className="text-red-500">*</span>
+                        </Label>
                         <Textarea
                             id="projectDescription"
                             value={formData.projectDescription}
@@ -91,15 +92,15 @@ function AddProjectDialog({
                             required
                             placeholder="Brief description of your project..."
                             rows={3}
-                            
+                            className="border-2 border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0 rounded-xl transition-all resize-none"
                         />
                     </div>
 
                     {/* Tech Stack */}
                     <div className="space-y-2">
-                        <Label htmlFor="techStack">
-                            Tech Stack <span className="text-destructive">*</span>
-                            </Label>
+                        <Label htmlFor="techStack" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Tech Stack <span className="text-red-500">*</span>
+                        </Label>
                         <Input
                             id="techStack"
                             value={formData.techStack}
@@ -108,16 +109,17 @@ function AddProjectDialog({
                             }
                             placeholder="React, Node.js, MongoDB"
                             required
+                            className="border-2 border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0 rounded-xl h-10 transition-all"
                         />
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-[10px] text-[#2C3947]/60 font-semibold">
                             Separate technologies with commas
                         </p>
                     </div>
 
                     {/* Project Link */}
                     <div className="space-y-2">
-                        <Label htmlFor="projectLink">
-                            Project Link <span className="text-destructive">*</span>
+                        <Label htmlFor="projectLink" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Project Link <span className="text-red-500">*</span>
                         </Label>
                         <Input
                             id="projectLink"
@@ -126,6 +128,7 @@ function AddProjectDialog({
                             onChange={(e) => setFormData({ ...formData, projectLink: e.target.value })}
                             placeholder="https://github.com/username/project"
                             required
+                            className="border-2 border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0 rounded-xl h-10 transition-all"
                         />
                     </div>
 
@@ -137,14 +140,14 @@ function AddProjectDialog({
                             type="button"
                             variant="outline"
                             onClick={onClose}
-                            className="flex-1"
+                            className="flex-1 font-bold text-[#2C3947] border-2 border-[#2C3947]/20 hover:border-[#2C3947] hover:bg-slate-50 rounded-xl h-10 transition-all"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={saving}
-                            className="flex-1"
+                            className="flex-1 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] h-10 rounded-xl shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                         >
                             {saving ? "Adding..." : "Add Project"}
                         </Button>
@@ -156,7 +159,7 @@ function AddProjectDialog({
     );
 }
 
-export function AddProject() {
+export function AddProject({ onSuccess }: { onSuccess?: () => void }) {
     const [showDialog, setShowDialog] = useState(false);
     const [formData, setFormData] = useState<ProjectFormData>({
         projectTitle: "",
@@ -195,8 +198,12 @@ export function AddProject() {
             setShowDialog(false);
             toast.success("Project added successfully!");
 
-            // Refresh page to show new project
-            setTimeout(() => window.location.reload(), 500);
+            // Refresh state via callback if provided, else reload
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                setTimeout(() => window.location.reload(), 500);
+            }
         } catch (error) {
             console.error("Error saving project:", error);
             toast.error("Failed to save project. Please try again.");
@@ -209,7 +216,7 @@ export function AddProject() {
         <>
             <Button
                 onClick={() => setShowDialog(true)}
-                className="gap-2"
+                className="gap-2 font-bold bg-white text-[#2C3947] border-2 border-[#2C3947] hover:bg-slate-50 h-10 px-4 rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
                 <Plus className="h-4 w-4" />
                 Add Project

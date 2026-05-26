@@ -31,6 +31,7 @@ interface AddLinkDialogProps {
     handleSubmit: (e: React.FormEvent) => void;
     validationState: ValidationState;
     onUrlChange: (url: string) => void;
+    onTitleChange: (title: string) => void;
 }
 
 function AddLinkDialog({
@@ -41,6 +42,7 @@ function AddLinkDialog({
     handleSubmit,
     validationState,
     onUrlChange,
+    onTitleChange,
 }: AddLinkDialogProps) {
     if (!open) return null;
 
@@ -111,25 +113,25 @@ function AddLinkDialog({
                 }
             }}
         >
-            <div className="bg-card border border-border rounded-lg p-4 sm:p-6 w-full max-w-md space-y-3 sm:space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-6 w-full max-w-md space-y-4 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] animate-in zoom-in-95 duration-200">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
-                        <LinkIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                    <h3 className="text-lg font-black text-[#2C3947] flex items-center gap-2">
+                        <LinkIcon className="h-5 w-5 text-[#2C3947]" />
                         Add New Link
                     </h3>
                     <button
                         onClick={onClose}
-                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        className="text-[#2C3947]/60 hover:text-[#2C3947] transition-colors bg-transparent p-0"
                     >
-                        <X className="h-4 w-4 sm:h-5 sm:w-5" />
+                        <X className="h-5 w-5" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* URL Field */}
                     <div className="space-y-2">
-                        <Label htmlFor="linkUrl">
-                            Enter URL <span className="text-destructive">*</span>
+                        <Label htmlFor="linkUrl" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Enter URL <span className="text-red-500">*</span>
                         </Label>
                         <div className="relative">
                             <Input
@@ -139,33 +141,33 @@ function AddLinkDialog({
                                 onChange={(e) => onUrlChange(e.target.value)}
                                 placeholder="https://linkedin.com/in/username"
                                 required
-                                className={
+                                className={`border-2 rounded-xl h-10 pr-10 transition-all ${
                                     validationState.isValid === false
-                                        ? "border-destructive focus-visible:ring-destructive pr-10"
+                                        ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-0"
                                         : validationState.isValid === true
-                                            ? "border-green-500 focus-visible:ring-green-500 pr-10"
-                                            : "pr-10"
-                                }
+                                            ? "border-green-500 focus-visible:border-green-500 focus-visible:ring-0"
+                                            : "border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
+                                }`}
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                                 {validationState.isValidating && (
-                                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                                    <Loader2 className="h-4 w-4 animate-spin text-[#2C3947]/50" />
                                 )}
                                 {!validationState.isValidating && validationState.isValid === true && (
                                     <CheckCircle2 className="h-4 w-4 text-green-500" />
                                 )}
                                 {!validationState.isValidating && validationState.isValid === false && (
-                                    <AlertCircle className="h-4 w-4 text-destructive" />
+                                    <AlertCircle className="h-4 w-4 text-red-500" />
                                 )}
                             </div>
                         </div>
                         {validationState.message && (
                             <p
-                                className={`text-xs flex items-center gap-1 ${validationState.isValid === false
-                                    ? "text-destructive"
+                                className={`text-xs font-semibold flex items-center gap-1 ${validationState.isValid === false
+                                    ? "text-red-500"
                                     : validationState.isValid === true
                                         ? "text-green-600"
-                                        : "text-muted-foreground"
+                                        : "text-[#2C3947]/60"
                                     }`}
                             >
                                 {validationState.message}
@@ -174,27 +176,28 @@ function AddLinkDialog({
                     </div>
 
                     {/* Title Field (Optional) */}
-                    {/* <div className="space-y-2">
-                        <Label htmlFor="linkTitle">Title (Optional)</Label>
+                    <div className="space-y-2 animate-in slide-in-from-top-1 duration-200">
+                        <Label htmlFor="linkTitle" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Name / Title <span className="text-[#2C3947]/40 font-normal">(Optional)</span>
+                        </Label>
                         <Input
                             id="linkTitle"
                             type="text"
                             value={formData.title}
-                            onChange={(e) =>
-                                setFormData({ ...formData, title: e.target.value })
-                            }
-                            placeholder={getPlatformName(detectedPlatform)}
+                            onChange={(e) => onTitleChange(e.target.value)}
+                            placeholder="e.g. Portfolio, Blog"
+                            className="border-2 rounded-xl h-10 transition-all border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
                         />
-                        <p className="text-xs text-muted-foreground">
-                            Leave blank to use platform name
+                        <p className="text-[10px] text-[#2C3947]/50 font-semibold">
+                            Leave empty to display only the icon in the preview.
                         </p>
-                    </div> */}
+                    </div>
 
                     {/* Preview Section */}
                     {formData.url && validationState.isValid && validationState.faviconUrl && (
                         <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">Preview</Label>
-                            <div className="p-4 bg-background/50 rounded-lg border border-border/50">
+                            <Label className="font-bold text-xs text-[#2C3947]/60 uppercase tracking-wider">Preview</Label>
+                            <div className="p-4 bg-slate-50 rounded-xl border-2 border-[#2C3947]/10">
                                 <div className="flex items-center gap-3">
                                     {formData.showIcon && validationState.faviconUrl && (
                                         <div className="flex-shrink-0">
@@ -203,16 +206,11 @@ function AddLinkDialog({
                                                 alt="Favicon"
                                                 className="h-5 w-5 rounded object-cover"
                                                 onError={(e) => {
-                                                    // Try fallback URLs if available
                                                     const currentIndex = validationState.currentFaviconIndex || 0;
                                                     const fallbacks = validationState.fallbackUrls || [];
-
                                                     if (currentIndex < fallbacks.length) {
-                                                        // Try next fallback
                                                         e.currentTarget.src = fallbacks[currentIndex];
-                                                        // Note: We can't update state here, but the src change will trigger another attempt
                                                     } else {
-                                                        // All fallbacks failed, hide the image
                                                         e.currentTarget.style.display = 'none';
                                                     }
                                                 }}
@@ -220,10 +218,10 @@ function AddLinkDialog({
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium truncate">
-                                            {formData.title || getPlatformName(detectedPlatform)}
+                                        <p className="text-sm font-bold text-[#2C3947] truncate">
+                                            {formData.title || formData.url}
                                         </p>
-                                        <p className="text-xs text-muted-foreground truncate">
+                                        <p className="text-xs text-[#2C3947]/60 truncate font-semibold">
                                             {formData.url}
                                         </p>
                                     </div>
@@ -238,14 +236,14 @@ function AddLinkDialog({
                             type="button"
                             variant="outline"
                             onClick={onClose}
-                            className="flex-1"
+                            className="flex-1 font-bold text-[#2C3947] border-2 border-[#2C3947]/20 hover:border-[#2C3947] hover:bg-slate-50 rounded-xl h-10 transition-all"
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
                             disabled={saving || validationState.isValidating || validationState.isValid !== true}
-                            className="flex-1"
+                            className="flex-1 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] h-10 rounded-xl shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                         >
                             {saving ? "Adding..." : "Add Link"}
                         </Button>
@@ -257,7 +255,7 @@ function AddLinkDialog({
     );
 }
 
-export function AddLink() {
+export function AddLink({ onSuccess }: { onSuccess?: () => void }) {
     const [showDialog, setShowDialog] = useState(false);
     const [formData, setFormData] = useState<LinkFormData>({
         title: "",
@@ -411,14 +409,11 @@ export function AddLink() {
     const handleUrlChange = useCallback((url: string) => {
         // Update form data immediately
         const platform = detectPlatform(url);
-        const platformName = getPlatformName(platform);
 
         setFormData((prev) => ({
             ...prev,
             url,
             platform,
-            // Always update title to platform name (user can edit it manually if needed)
-            title: platformName,
         }));
 
         // Clear existing timer
@@ -448,7 +443,7 @@ export function AddLink() {
         try {
             // Prepare data for backend
             const linkData = {
-                title: formData.title || undefined,
+                title: formData.title ? formData.title.trim() : "",
                 url: formData.url,
                 platform: formData.platform,
                 showIcon: formData.showIcon,
@@ -473,8 +468,12 @@ export function AddLink() {
             setShowDialog(false);
             toast.success("Link added successfully!");
 
-            // Refresh page to show new link
-            setTimeout(() => window.location.reload(), 500);
+            // Refresh state via callback if provided, else reload
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                setTimeout(() => window.location.reload(), 500);
+            }
         } catch (error) {
             console.error("Error saving link:", error);
             toast.error("Failed to save link. Please try again.");
@@ -487,7 +486,7 @@ export function AddLink() {
         <>
             <Button
                 onClick={() => setShowDialog(true)}
-                className="gap-2"
+                className="gap-2 font-bold bg-white text-[#2C3947] border-2 border-[#2C3947] hover:bg-slate-50 h-10 px-4 rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all"
             >
                 <Plus className="h-4 w-4" />
                 Add Link
@@ -500,6 +499,7 @@ export function AddLink() {
                 handleSubmit={handleSubmit}
                 validationState={validationState}
                 onUrlChange={handleUrlChange}
+                onTitleChange={(title) => setFormData((prev) => ({ ...prev, title }))}
             />
         </>
     );

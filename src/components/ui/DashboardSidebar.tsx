@@ -13,8 +13,8 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import axios from "@/lib/axios";
-import { useNavigate } from "@tanstack/react-router";
-import { Home, LogOut, User } from "lucide-react";
+import { useNavigate, useLocation } from "@tanstack/react-router";
+import { BarChart3, LogOut, Palette, Link as LinkIcon, Briefcase } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface UserData {
@@ -26,26 +26,12 @@ interface UserData {
 
 export function DashboardSidebar() {
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState<UserData | null>(null);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-    const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
-    // Update current path when location changes
-    useEffect(() => {
-        const handleLocationChange = () => {
-            setCurrentPath(window.location.pathname);
-        };
-
-        // Listen for popstate (back/forward)
-        window.addEventListener('popstate', handleLocationChange);
-
-        // Also update on mount
-        setCurrentPath(window.location.pathname);
-
-        return () => {
-            window.removeEventListener('popstate', handleLocationChange);
-        };
-    }, []);
+    const searchParams = new URLSearchParams(location.search);
+    const activeTab = searchParams.get("tab") || "links";
 
     // Fetch user data on mount
     useEffect(() => {
@@ -78,12 +64,9 @@ export function DashboardSidebar() {
             .slice(0, 2);
     };
 
-    // Check if route is active
-    const isActive = (path: string): boolean => {
-        if (path === "/dashboard") {
-            return currentPath === "/dashboard";
-        }
-        return currentPath.startsWith(path);
+    // Check if tab is active
+    const isTabActive = (tabName: string): boolean => {
+        return activeTab === tabName;
     };
 
     // Logout handler
@@ -108,70 +91,109 @@ export function DashboardSidebar() {
     };
 
     return (
-        <Sidebar>
+        <Sidebar className="border-r-2 border-[#2C3947]/10 bg-white">
             {/* Header with Logo */}
-            <SidebarHeader className="border-b border-border/50 p-3 sm:p-4 flex-shrink-0">
-                <div className="flex items-center space-x-2">
-                    <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <span className="text-base sm:text-lg font-bold">O</span>
+            <SidebarHeader className="border-b-2 border-[#2C3947]/10 p-4 flex-shrink-0">
+                <div className="flex items-center space-x-2.5">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#2C3947] text-[#FEF9C3] border-2 border-[#2C3947] shadow-[2px_2px_0px_0px_rgba(44,57,71,1)]">
+                        <span className="text-base font-black">O</span>
                     </div>
-                    <span className="text-lg sm:text-xl font-semibold tracking-tight">OneProfile</span>
+                    <span className="text-lg font-black tracking-tight text-[#2C3947]">OneProfile</span>
                 </div>
             </SidebarHeader>
 
             {/* Main Navigation */}
-            <SidebarContent className="flex-1 overflow-y-auto">
+            <SidebarContent className="flex-1 overflow-y-auto px-2">
                 <SidebarGroup>
-                    {/* <SidebarGroupLabel>Navigation</SidebarGroupLabel> */}
                     <SidebarGroupContent>
-                        <SidebarMenu>
+                        <SidebarMenu className="space-y-1">
                             <SidebarMenuItem className="mb-2 mt-2">
                                 <SidebarMenuButton
                                     onClick={() => {
                                         // @ts-expect-error - Route types
-                                        navigate({ to: "/dashboard" });
-                                        setCurrentPath("/dashboard");
+                                        navigate({ to: "/dashboard", search: { tab: "links" } as any });
                                     }}
-                                    isActive={isActive("/dashboard")}
-                                    style={{ backgroundColor: isActive("/dashboard") ? 'hsl(240 3.7% 15.9%)' : 'transparent', color: isActive("/dashboard") ? 'hsl(240 4.8% 95.9%)' : 'inherit' }}
+                                    isActive={isTabActive("links")}
+                                    className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
+                                        isTabActive("links")
+                                            ? "bg-[#2C3947] text-[#FEF9C3] border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:bg-[#2C3947] hover:text-[#FEF9C3]"
+                                            : "bg-transparent text-[#2C3947]/75 border-transparent hover:bg-slate-50 hover:text-[#2C3947]"
+                                    }`}
                                 >
-                                    <Home className="h-4 w-4" />
-                                    <span>Dashboard</span>
+                                    <LinkIcon className="h-4 w-4" />
+                                    <span>Links</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            <SidebarMenuItem>
+                            <SidebarMenuItem className="mb-2">
                                 <SidebarMenuButton
                                     onClick={() => {
                                         // @ts-expect-error - Route types
-                                        navigate({ to: "/dashboard/profile" });
-                                        setCurrentPath("/dashboard/profile");
+                                        navigate({ to: "/dashboard", search: { tab: "projects" } as any });
                                     }}
-                                    isActive={isActive("/dashboard/profile")}
-                                    style={{ backgroundColor: isActive("/dashboard/profile") ? 'hsl(240 3.7% 15.9%)' : 'transparent', color: isActive("/dashboard/profile") ? 'hsl(240 4.8% 95.9%)' : 'inherit' }}
+                                    isActive={isTabActive("projects")}
+                                    className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
+                                        isTabActive("projects")
+                                            ? "bg-[#2C3947] text-[#FEF9C3] border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:bg-[#2C3947] hover:text-[#FEF9C3]"
+                                            : "bg-transparent text-[#2C3947]/75 border-transparent hover:bg-slate-50 hover:text-[#2C3947]"
+                                    }`}
                                 >
-                                    <User className="h-4 w-4" />
-                                    <span>Profile</span>
+                                    <Briefcase className="h-4 w-4" />
+                                    <span>Projects</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
+                            <SidebarMenuItem className="mb-2">
+                                <SidebarMenuButton
+                                    onClick={() => {
+                                        // @ts-expect-error - Route types
+                                        navigate({ to: "/dashboard", search: { tab: "appearance" } as any });
+                                    }}
+                                    isActive={isTabActive("appearance")}
+                                    className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
+                                        isTabActive("appearance")
+                                            ? "bg-[#2C3947] text-[#FEF9C3] border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:bg-[#2C3947] hover:text-[#FEF9C3]"
+                                            : "bg-transparent text-[#2C3947]/75 border-transparent hover:bg-slate-50 hover:text-[#2C3947]"
+                                    }`}
+                                >
+                                    <Palette className="h-4 w-4" />
+                                    <span>Appearance</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                            {/* <SidebarMenuItem className="mb-2">
+                                <SidebarMenuButton
+                                    onClick={() => {
+                                        // @ts-expect-error - Route types
+                                        navigate({ to: "/dashboard", search: { tab: "analytics" } as any });
+                                    }}
+                                    isActive={isTabActive("analytics")}
+                                    className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
+                                        isTabActive("analytics")
+                                            ? "bg-[#2C3947] text-[#FEF9C3] border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:bg-[#2C3947] hover:text-[#FEF9C3]"
+                                            : "bg-transparent text-[#2C3947]/75 border-transparent hover:bg-slate-50 hover:text-[#2C3947]"
+                                    }`}
+                                >
+                                    <BarChart3 className="h-4 w-4" />
+                                    <span>Analytics</span>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem> */}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
 
             {/* Footer with User Info and Logout */}
-            <SidebarFooter className="border-t border-border/50 p-3 sm:p-4 flex-shrink-0 mt-auto">
-                <div className="space-y-2 sm:space-y-3">
+            <SidebarFooter className="border-t-2 border-[#2C3947]/10 p-4 flex-shrink-0 mt-auto">
+                <div className="space-y-3">
                     {/* User Info */}
                     {user && (
-                        <div className="flex items-center gap-2 sm:gap-3 px-1.5 sm:px-2 py-1.5 rounded-lg bg-background/50">
-                            <Avatar className="h-7 w-7 sm:h-8 sm:w-8">
-                                <AvatarFallback className="bg-primary text-primary-foreground text-xs sm:text-sm font-semibold">
+                        <div className="flex items-center gap-3 p-2.5 rounded-xl bg-slate-50 border-2 border-[#2C3947]/10">
+                            <Avatar className="h-8 w-8 rounded-lg border-2 border-[#2C3947]">
+                                <AvatarFallback className="bg-[#2C3947] text-[#FEF9C3] text-xs font-black">
                                     {getUserInitials(user.name)}
                                 </AvatarFallback>
                             </Avatar>
                             <div className="flex-1 min-w-0">
-                                <p className="text-xs sm:text-sm font-medium truncate">{user.name}</p>
-                                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">
+                                <p className="text-xs font-bold text-[#2C3947] truncate">{user.name}</p>
+                                <p className="text-[10px] text-[#2C3947]/60 font-semibold truncate">
                                     {user.email}
                                 </p>
                             </div>
@@ -183,9 +205,9 @@ export function DashboardSidebar() {
                         onClick={handleLogout}
                         disabled={isLoggingOut}
                         variant="outline"
-                        className="w-full gap-1.5 sm:gap-2 text-xs sm:text-sm text-destructive hover:text-destructive hover:bg-destructive/10 border-none"
+                        className="w-full gap-2 text-xs sm:text-sm font-bold text-red-500 hover:text-red-600 hover:bg-red-50 border-2 border-red-500/20 rounded-xl h-10 transition-all"
                     >
-                        <LogOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <LogOut className="h-3.5 w-3.5" />
                         {isLoggingOut ? "Logging out..." : "Logout"}
                     </Button>
                 </div>

@@ -188,7 +188,7 @@ export default function LinksStep({
             ...links,
             {
                 id: crypto.randomUUID(),
-                title: newLinkTitle || getPlatformName(platform),
+                title: newLinkTitle ? newLinkTitle.trim() : "",
                 url: newLinkUrl,
                 platform,
                 showIcon,
@@ -253,9 +253,9 @@ export default function LinksStep({
                     }
                 }}
             >
-                <div className="bg-card border border-border rounded-lg p-6 w-full max-w-md space-y-4 shadow-2xl animate-in zoom-in-95 duration-200">
+                <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-6 w-full max-w-md space-y-4 shadow-[8px_8px_0px_0px_rgba(44,57,71,1)] animate-in zoom-in-95 duration-200">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">Add New Link</h3>
+                        <h3 className="text-xl font-black text-[#2C3947] tracking-tight">Add New Link</h3>
                         <button
                             onClick={() => {
                                 setShowAddLinkDialog(false);
@@ -263,55 +263,25 @@ export default function LinksStep({
                                 setNewLinkUrl("");
                                 setShowIcon(true);
                             }}
-                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            className="text-[#2C3947]/50 hover:text-[#2C3947] transition-colors"
                         >
                             <X className="h-5 w-5" />
                         </button>
                     </div>
 
-                    <p className="text-sm text-muted-foreground">
-                        Add a new link to your profile. Enter a title and URL.
+                    <p className="text-sm text-[#2C3947]/70 font-medium">
+                        Add a new link to your profile. Enter a URL below.
                     </p>
-
-                    {/* Icon Link Toggle */}
-                    {/* <div className="flex items-center justify-between p-3 bg-background/50 rounded-lg border border-border/50">
-                        <div>
-                            <Label htmlFor="icon-link" className="font-medium">
-                                Icon Link
-                            </Label>
-                            <p className="text-xs text-muted-foreground">
-                                Display a social media icon instead of a preview card
-                            </p>
-                        </div>
-                        <Switch
-                            id="icon-link"
-                            checked={showIcon}
-                            onCheckedChange={setShowIcon}
-                        />
-                    </div> */}
-
-                    {/* Title Field */}
-                    {/* <div className="space-y-2">
-                        <Label htmlFor="linkTitle">Title</Label>
-                        <Input
-                            id="linkTitle"
-                            type="text"
-                            placeholder="e.g., My Portfolio"
-                            value={newLinkTitle}
-                            onChange={(e) => setNewLinkTitle(e.target.value)}
-                            className="bg-background/50 border-border/50 focus:border-primary transition-colors"
-                        />
-                    </div> */}
 
                     {/* URL Field */}
                     <div className="space-y-2">
-                        <Label htmlFor="linkUrl">Profile URL</Label>
+                        <Label htmlFor="linkUrl" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">Profile URL</Label>
                         <div className="relative">
                             <Input
                                 ref={urlInputRef}
                                 id="linkUrl"
                                 type="url"
-                                placeholder="example.com or https://yo"
+                                placeholder="example.com or https://yourprofile"
                                 value={newLinkUrl}
                                 onChange={(e) => handleUrlChange(e.target.value)}
                                 onKeyDown={(e) => {
@@ -322,9 +292,9 @@ export default function LinksStep({
                                 autoFocus
                                 className={
                                     validationState.isValid === false
-                                        ? "border-destructive focus-visible:ring-destructive pr-10"
+                                        ? "border-destructive focus-visible:border-destructive focus-visible:shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] pr-10"
                                         : validationState.isValid === true
-                                            ? "border-green-500 focus-visible:ring-green-500 pr-10"
+                                            ? "border-green-500 focus-visible:border-green-500 focus-visible:shadow-[2px_2px_0px_0px_rgba(34,197,94,1)] pr-10"
                                             : "pr-10"
                                 }
                             />
@@ -341,14 +311,14 @@ export default function LinksStep({
                             </div>
                         </div>
                         {duplicateError && (
-                            <p className="text-xs text-destructive flex items-center gap-1 animate-in slide-in-from-top-1 duration-200">
+                            <p className="text-xs text-destructive flex items-center gap-1 font-semibold animate-in slide-in-from-top-1 duration-200">
                                 <X className="h-3 w-3" />
                                 This link has already been added!
                             </p>
                         )}
                         {validationState.message && (
                             <p
-                                className={`text-xs flex items-center gap-1 ${validationState.isValid === false
+                                className={`text-xs flex items-center gap-1 font-semibold ${validationState.isValid === false
                                     ? "text-destructive"
                                     : validationState.isValid === true
                                         ? "text-green-600"
@@ -360,11 +330,29 @@ export default function LinksStep({
                         )}
                     </div>
 
+                    {/* Title Field (Optional) */}
+                    <div className="space-y-2 animate-in slide-in-from-top-1 duration-200">
+                        <Label htmlFor="linkTitle" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                            Name / Title <span className="text-[#2C3947]/40 font-normal">(Optional)</span>
+                        </Label>
+                        <Input
+                            id="linkTitle"
+                            type="text"
+                            placeholder="e.g. Portfolio, Blog"
+                            value={newLinkTitle}
+                            onChange={(e) => setNewLinkTitle(e.target.value)}
+                            className="border-2 rounded-xl h-10 transition-all border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
+                        />
+                        <p className="text-[10px] text-[#2C3947]/50 font-semibold">
+                            Leave empty to display only the icon in the preview.
+                        </p>
+                    </div>
+
                     {/* Preview Section */}
                     {newLinkUrl && validationState.isValid && validationState.faviconUrl && (
                         <div className="space-y-2">
-                            <Label className="text-xs text-muted-foreground">Preview</Label>
-                            <div className="p-4 bg-background/50 rounded-lg border border-border/50 animate-in slide-in-from-top-2 duration-200">
+                            <Label className="text-xs text-[#2C3947]/70 font-bold uppercase tracking-wider">Preview</Label>
+                            <div className="p-4 bg-slate-50 border-2 border-[#2C3947]/20 rounded-xl animate-in slide-in-from-top-2 duration-200">
                                 <div className="flex items-center gap-3">
                                     {showIcon && validationState.faviconUrl && (
                                         <div className="flex-shrink-0">
@@ -373,15 +361,12 @@ export default function LinksStep({
                                                 alt="Favicon"
                                                 className="h-5 w-5 rounded object-cover"
                                                 onError={(e) => {
-                                                    // Try fallback URLs if available
                                                     const currentIndex = validationState.currentFaviconIndex || 0;
                                                     const fallbacks = validationState.fallbackUrls || [];
 
                                                     if (currentIndex < fallbacks.length) {
-                                                        // Try next fallback
                                                         e.currentTarget.src = fallbacks[currentIndex];
                                                     } else {
-                                                        // All fallbacks failed, hide the image
                                                         e.currentTarget.style.display = 'none';
                                                     }
                                                 }}
@@ -389,10 +374,10 @@ export default function LinksStep({
                                         </div>
                                     )}
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium truncate">
-                                            {newLinkTitle || getPlatformName(detectPlatform(newLinkUrl))}
+                                        <p className="text-sm font-bold text-[#2C3947] truncate">
+                                            {newLinkTitle || newLinkUrl}
                                         </p>
-                                        <p className="text-xs text-muted-foreground truncate">
+                                        <p className="text-xs text-[#2C3947]/60 font-semibold truncate">
                                             {newLinkUrl}
                                         </p>
                                     </div>
@@ -411,14 +396,14 @@ export default function LinksStep({
                                 setShowIcon(true);
                             }}
                             variant="outline"
-                            className="flex-1"
+                            className="flex-1 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={addLink}
                             disabled={!newLinkUrl || validationState.isValidating || validationState.isValid !== true}
-                            className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                            className="flex-1 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none h-11"
                         >
                             Add Link
                         </Button>
@@ -432,25 +417,25 @@ export default function LinksStep({
     return (
         <div className="space-y-6">
             <div className="text-center space-y-2">
-                <h2 className="text-3xl font-bold">Add your links</h2>
-                <p className="text-muted-foreground">
+                <h2 className="text-3xl font-black text-[#2C3947] tracking-tight">Add your links</h2>
+                <p className="text-[#2C3947]/70 font-medium">
                     Add at least one link to share on your profile
                 </p>
-                <p className="text-xs text-primary">
+                <p className="text-xs text-rose-500 font-bold">
                     * At least 1 link is required
                 </p>
             </div>
 
             <div className="space-y-4 max-w-md mx-auto">
                 {links.length === 0 ? (
-                    <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
-                        <LinkIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                        <p className="text-muted-foreground mb-4">No links yet</p>
-                        <p className="text-sm text-primary mb-4">Add at least one link to continue</p>
+                    <div className="text-center py-12 border-2 border-dashed border-[#2C3947]/20 bg-slate-50/50 rounded-2xl">
+                        <LinkIcon className="h-12 w-12 mx-auto text-[#2C3947]/40 mb-4" />
+                        <p className="text-[#2C3947]/60 font-semibold mb-2">No links yet</p>
+                        <p className="text-sm text-rose-500/85 font-bold mb-4">Add at least one link to continue</p>
                         <Button
                             onClick={() => setShowAddLinkDialog(true)}
                             variant="outline"
-                            className="gap-2"
+                            className="gap-2 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-100 transition-all h-11"
                         >
                             <Plus className="h-4 w-4" />
                             Add Link
@@ -462,22 +447,39 @@ export default function LinksStep({
                             {links.map((link) => (
                                 <div
                                     key={link.id}
-                                    className="flex items-center gap-3 p-4 bg-background/50 border border-border/50 rounded-lg hover:border-border transition-colors group"
+                                    className="flex items-center gap-3 p-4 bg-white border-2 border-[#2C3947] shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] rounded-xl hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] transition-all duration-200 group"
                                 >
-                                    {link.showIcon && (
-                                        <div className="flex-shrink-0">
-                                            {getPlatformIcon(link.platform)}
-                                        </div>
-                                    )}
+                                    <div className="flex-shrink-0">
+                                        {link.faviconUrl ? (
+                                            <img
+                                                src={link.faviconUrl}
+                                                alt=""
+                                                className="h-5 w-5 rounded object-cover"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                    const parent = e.currentTarget.parentElement;
+                                                    if (parent) {
+                                                        parent.classList.add('favicon-fallback');
+                                                    }
+                                                }}
+                                            />
+                                        ) : (
+                                            getPlatformIcon(link.platform)
+                                        )}
+                                    </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-medium truncate">{link.title}</p>
-                                        <p className="text-xs text-muted-foreground truncate">
-                                            {link.url}
+                                        <p className="text-sm font-bold text-[#2C3947] truncate">
+                                            {link.title || link.url}
                                         </p>
+                                        {link.title && (
+                                            <p className="text-xs text-[#2C3947]/65 truncate">
+                                                {link.url}
+                                            </p>
+                                        )}
                                     </div>
                                     <button
                                         onClick={() => removeLink(link.id)}
-                                        className="flex-shrink-0 text-muted-foreground hover:text-destructive transition-colors opacity-0 group-hover:opacity-100"
+                                        className="flex-shrink-0 text-[#2C3947]/50 hover:text-rose-500 transition-colors opacity-100 sm:opacity-0 group-hover:opacity-100 bg-transparent p-0"
                                     >
                                         <X className="h-4 w-4" />
                                     </button>
@@ -487,7 +489,7 @@ export default function LinksStep({
                         <Button
                             onClick={() => setShowAddLinkDialog(true)}
                             variant="outline"
-                            className="w-full gap-2"
+                            className="w-full gap-2 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11"
                         >
                             <Plus className="h-4 w-4" />
                             Add Another Link
@@ -497,13 +499,17 @@ export default function LinksStep({
             </div>
 
             <div className="flex justify-center gap-4 pt-4">
-                <Button onClick={onBack} variant="outline" className="px-8">
+                <Button 
+                    onClick={onBack} 
+                    variant="outline" 
+                    className="px-8 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11"
+                >
                     Back
                 </Button>
                 <Button
                     onClick={handleContinue}
                     disabled={links.length === 0}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] h-11 px-8 rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 >
                     Continue
                 </Button>

@@ -1,15 +1,14 @@
-"use client";
-
 import LinksStep from "@/components/onboarding/LinksStep";
 import PreviewStep from "@/components/onboarding/PreviewStep";
 import ProfileStep from "@/components/onboarding/ProfileStep";
+import ThemeStep from "@/components/onboarding/ThemeStep";
 import UsernameStep from "@/components/onboarding/UsernameStep";
 import axios from "@/lib/axios";
 import { useNavigate } from "@tanstack/react-router";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type OnboardingStep = "username" | "profile" | "links" | "preview";
+type OnboardingStep = "username" | "profile" | "links" | "theme" | "preview";
 
 interface SocialLink {
     id: string;
@@ -37,6 +36,9 @@ export default function OnboardingFlow() {
     // Links step state
     const [links, setLinks] = useState<SocialLink[]>([]);
 
+    // Theme step state
+    const [theme, setTheme] = useState("default");
+
     // Fetch user's name on component mount to pre-fill display name
     useEffect(() => {
         const fetchUserData = async () => {
@@ -61,7 +63,8 @@ export default function OnboardingFlow() {
         { id: "username", label: "Username", number: 1 },
         { id: "profile", label: "Profile", number: 2 },
         { id: "links", label: "Links", number: 3 },
-        { id: "preview", label: "Preview", number: 4 },
+        { id: "theme", label: "Theme", number: 4 },
+        { id: "preview", label: "Preview", number: 5 },
     ];
 
     const currentStepIndex = steps.findIndex(s => s.id === currentStep);
@@ -116,6 +119,7 @@ export default function OnboardingFlow() {
                 bio,
                 links,
                 profilePicture,
+                theme,
             }, {
                 withCredentials: true,
             });
@@ -130,15 +134,15 @@ export default function OnboardingFlow() {
     };
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
+        <div className="min-h-screen bg-gradient-to-br from-[#FEF9C3]/50 via-white to-[#FEF9C3]/30 flex items-center justify-center px-4 sm:px-6 py-6 sm:py-8">
             <div className="w-full max-w-2xl">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6 sm:mb-8">
                     <div className="flex items-center space-x-2">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                            <span className="text-lg font-bold">O</span>
+                        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#2C3947] text-[#FEF9C3] border-2 border-[#2C3947] shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] transition-transform duration-300 hover:rotate-12">
+                            <span className="text-xl font-black">O</span>
                         </div>
-                        <span className="text-lg sm:text-xl font-semibold tracking-tight">OneProfile</span>
+                        <span className="text-lg sm:text-xl font-black text-[#2C3947] tracking-tight">OneProfile</span>
                     </div>
                 </div>
 
@@ -149,20 +153,20 @@ export default function OnboardingFlow() {
                             <div className="flex flex-col items-center flex-1">
                                 <div
                                     className={`flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 transition-all ${index < currentStepIndex
-                                        ? "bg-primary border-primary text-primary-foreground"
+                                        ? "bg-[#2C3947] border-[#2C3947] text-[#FEF9C3]"
                                         : index === currentStepIndex
-                                            ? "border-primary text-primary"
-                                            : "border-border text-muted-foreground"
+                                            ? "border-[#2C3947] text-[#2C3947] bg-[#FEF9C3]/55 font-bold"
+                                            : "border-[#2C3947]/20 text-[#2C3947]/40"
                                         }`}
                                 >
                                     {index < currentStepIndex ? (
                                         <Check className="h-4 w-4 sm:h-5 sm:w-5" />
                                     ) : (
-                                        <span className="text-sm sm:text-base font-semibold">{step.number}</span>
+                                        <span className="text-sm sm:text-base font-bold">{step.number}</span>
                                     )}
                                 </div>
                                 <span
-                                    className={`mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-medium ${index <= currentStepIndex ? "text-foreground" : "text-muted-foreground"
+                                    className={`mt-1.5 sm:mt-2 text-[10px] sm:text-xs font-bold ${index <= currentStepIndex ? "text-[#2C3947]" : "text-[#2C3947]/40"
                                         }`}
                                 >
                                     {step.label}
@@ -170,7 +174,7 @@ export default function OnboardingFlow() {
                             </div>
                             {index < steps.length - 1 && (
                                 <div
-                                    className={`h-0.5 flex-1 mx-1 sm:mx-2 transition-all ${index < currentStepIndex ? "bg-primary" : "bg-border"
+                                    className={`h-0.5 flex-1 mx-1 sm:mx-2 transition-all ${index < currentStepIndex ? "bg-[#2C3947]" : "bg-[#2C3947]/10"
                                         }`}
                                 />
                             )}
@@ -179,14 +183,14 @@ export default function OnboardingFlow() {
                 </div>
 
                 {/* Step Content */}
-                <div className="bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 sm:p-6 md:p-8">
+                <div className="bg-white border-2 border-[#2C3947] shadow-[6px_6px_0px_0px_rgba(44,57,71,1)] rounded-2xl p-4 sm:p-6 md:p-8">
                     {currentStep === "username" && (
                         <UsernameStep
                             username={username}
                             setUsername={(value) => {
-                                setUsername(value);
-                                // Reset validation state when username changes
-                                setIsUsernameAvailable(null);
+                                 setUsername(value);
+                                 // Reset validation state when username changes
+                                 setIsUsernameAvailable(null);
                             }}
                             isUsernameAvailable={isUsernameAvailable}
                             isCheckingUsername={isCheckingUsername}
@@ -210,8 +214,17 @@ export default function OnboardingFlow() {
                         <LinksStep
                             links={links}
                             setLinks={setLinks}
-                            onContinue={() => setCurrentStep("preview")}
+                            onContinue={() => setCurrentStep("theme")}
                             onBack={() => setCurrentStep("profile")}
+                        />
+                    )}
+
+                    {currentStep === "theme" && (
+                        <ThemeStep
+                            selectedTheme={theme}
+                            setSelectedTheme={setTheme}
+                            onContinue={() => setCurrentStep("preview")}
+                            onBack={() => setCurrentStep("links")}
                         />
                     )}
 
@@ -222,8 +235,9 @@ export default function OnboardingFlow() {
                             displayName={displayName}
                             bio={bio}
                             links={links}
+                            theme={theme}
                             onFinish={handleFinish}
-                            onBack={() => setCurrentStep("links")}
+                            onBack={() => setCurrentStep("theme")}
                         />
                     )}
                 </div>

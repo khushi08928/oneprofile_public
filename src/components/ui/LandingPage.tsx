@@ -1,4 +1,3 @@
-import { AnimatedBackground } from "@/components/landing/AnimatedBackground";
 import { FAQSection } from "@/components/landing/FAQSection";
 import { FeaturesSection } from "@/components/landing/FeaturesSection";
 import { HeroSection } from "@/components/landing/HeroSection";
@@ -7,27 +6,41 @@ import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Animated Background Gradient */}
-      <AnimatedBackground />
-
-      {/* Hero Section */}
-      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-white relative overflow-hidden">
+      {/* Hero Section: Pastel Yellow (#FEF9C3) */}
+      <section className="bg-[#FEF9C3] pt-32 pb-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Subtle warm animated background glows inside Hero */}
+        <div className="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+          <div className="absolute top-[20%] left-[-10%] w-[350px] h-[350px] bg-emerald-400/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-[10%] right-[-10%] w-[400px] h-[400px] bg-amber-400/20 rounded-full blur-3xl" />
+        </div>
         <div className="container mx-auto max-w-6xl">
           <HeroSection />
+        </div>
+      </section>
 
-          {/* Features Grid */}
+      {/* Features Grid: Clean Contrast White */}
+      <section className="bg-white py-24 px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-6xl">
           <FeaturesSection />
+        </div>
+      </section>
 
-          {/* How it Works */}
+      {/* How it Works: Pastel Sage Green (#EBF3E6) */}
+      <section className="bg-[#EBF3E6] py-24 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
           <HowItWorksSection />
+        </div>
+      </section>
 
-          {/* FAQ Section */}
+      {/* FAQ Section: Signature Navy Slate (#2C3947) */}
+      <section className="bg-[#2C3947] py-24 px-4 sm:px-6 lg:px-8 text-white relative overflow-hidden">
+        <div className="container mx-auto max-w-4xl">
           <FAQSection />
         </div>
-      </main>
+      </section>
 
-      {/* Footer */}
+      {/* Footer: Matching Forest Green */}
       <LandingFooter />
     </div>
   );

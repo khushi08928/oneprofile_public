@@ -94,73 +94,64 @@ export default function SignInForm() {
 
 
     return (
-        <div className="min-h-screen bg-background flex items-center justify-center px-6 py-8">
+        <div className="min-h-screen bg-gradient-to-br from-[#FEF9C3]/50 via-white to-[#FEF9C3]/30 flex items-center justify-center px-6 py-8">
             {/* Back to Home */}
             <Link
                 to="/"
-                className="fixed top-6 left-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                className="fixed top-6 left-6 flex items-center gap-2 text-sm text-[#2C3947]/70 hover:text-[#2C3947] font-semibold transition-colors"
             >
                 <ArrowLeft className="h-4 w-4" />
                 Back to home
             </Link>
 
             {/* Login Card */}
-
-            <Card className="w-full max-w-md sm:max-w-lg lg:max-w-sm border-border/50 bg-card/50 backdrop-blur-sm">
+            <Card className="w-full max-w-md border-2 border-[#2C3947] bg-white shadow-[6px_6px_0px_0px_rgba(44,57,71,1)] rounded-2xl transition-all duration-300">
                 <CardHeader className="space-y-3 text-center">
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                        <span className="text-2xl font-bold">O</span>
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-[#2C3947] text-[#FEF9C3] border-2 border-[#2C3947] shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] transition-transform duration-300 hover:rotate-12">
+                        <span className="text-2xl font-black">O</span>
                     </div>
-                    <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
-                    <CardDescription>
+                    <CardTitle className="text-2xl sm:text-3xl font-black text-[#2C3947] tracking-tight">Welcome back</CardTitle>
+                    <CardDescription className="text-[#2C3947]/70 font-medium text-xs sm:text-sm">
                         Sign in to your account to continue
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                     {error && (
-                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+                        <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm font-semibold">
                             {error}
                         </div>
                     )}
 
                     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="email">Email</Label>
+                            <Label htmlFor="email" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">Email</Label>
                             <Input
                                 id="email"
                                 type="email"
                                 placeholder="you@example.com"
-                                className="bg-background/50 border-border/50 focus:border-primary transition-colors"
                                 {...register("email")}
                             />
                             {errors.email && (
-                                <p className="text-sm text-destructive">{errors.email.message}</p>
+                                <p className="text-sm text-destructive font-semibold">{errors.email.message}</p>
                             )}
                         </div>
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
-                                <Label htmlFor="password">Password</Label>
-                                {/* <Link
-                                    to="/"
-                                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                                >
-                                    Forgot password?
-                                </Link> */}
+                                <Label htmlFor="password" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">Password</Label>
                             </div>
                             <Input
                                 id="password"
                                 type="password"
                                 placeholder="••••••••"
-                                className="bg-background/50 border-border/50 focus:border-primary transition-colors"
                                 {...register("password")}
                             />
                             {errors.password && (
-                                <p className="text-sm text-destructive">{errors.password.message}</p>
+                                <p className="text-sm text-destructive font-semibold">{errors.password.message}</p>
                             )}
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200"
+                            className="w-full bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold py-3.5 h-11 rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,0.2)] hover:shadow-[3px_3px_0px_0px_rgba(44,57,71,0.4)] border-none transition-all active:scale-[0.98]"
                             disabled={isLoading}
                         >
                             {isLoading ? "Signing in..." : "Sign in"}
@@ -169,16 +160,16 @@ export default function SignInForm() {
 
                     <div className="relative">
                         <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-border/50" />
+                            <span className="w-full border-t-2 border-[#2C3947]/10" />
                         </div>
                         <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
+                            <span className="bg-white px-3 text-[#2C3947]/60 text-xs font-bold uppercase tracking-wider">Or continue with</span>
                         </div>
                     </div>
 
                     <Button
                         variant="outline"
-                        className="w-full border-border/50 hover:bg-secondary/50 transition-all duration-200"
+                        className="w-full h-11 border-2 border-[#2C3947] bg-white text-[#2C3947] hover:bg-slate-50 font-bold rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all active:scale-[0.98]"
                         type="button"
                         onClick={() => {
                             const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:4000';
@@ -206,10 +197,10 @@ export default function SignInForm() {
                         Sign in with Google
                     </Button>
 
-                    <p className="text-center text-sm text-muted-foreground">
+                    <p className="text-center text-sm text-[#2C3947]/70 font-semibold">
                         Don't have an account?{" "}
                         {/* @ts-expect-error - Route types will be inferred after dev server restart */}
-                        <Link to="/signup" className="font-medium text-foreground hover:underline">
+                        <Link to="/signup" className="font-bold text-[#2C3947] hover:underline">
                             Sign up
                         </Link>
                     </p>

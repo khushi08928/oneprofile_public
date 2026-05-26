@@ -1,12 +1,13 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import axios from "@/lib/axios";
 import { useParams } from "@tanstack/react-router";
-import { Briefcase, Github, Instagram, Linkedin, Link as LinkIcon, Share } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Briefcase, Github, Instagram, Linkedin, Link as LinkIcon, Share, ExternalLink } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { themes } from "@/lib/themes";
 
 interface SocialLink {
+    id?: string;
     platform: string;
     url: string;
     title?: string;
@@ -28,6 +29,7 @@ interface UserProfile {
     bio?: string;
     links?: SocialLink[];
     projects?: Project[];
+    theme?: string;
 }
 
 export function PublicProfile() {
@@ -36,6 +38,7 @@ export function PublicProfile() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
+    const hasTrackedView = useRef(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -56,6 +59,52 @@ export function PublicProfile() {
             fetchProfile();
         }
     }, [username]);
+
+    // Check if the visitor is the profile owner (skip self-tracking)
+    const [isOwner, setIsOwner] = useState(false);
+
+    useEffect(() => {
+        // Try to detect if the logged-in user is the profile owner
+        axios.get("/api/profile/me/profile", { withCredentials: true })
+            .then(res => {
+                if (res.data?.profile?.username === username) {
+                    setIsOwner(true);
+                }
+            })
+            .catch(() => {
+                // Not logged in — definitely not the owner
+                setIsOwner(false);
+            });
+    }, [username]);
+
+    // Track profile view (fire once per page load, skip if owner)
+    useEffect(() => {
+        if (username && profile && !hasTrackedView.current && !isOwner) {
+            hasTrackedView.current = true;
+            // Fire-and-forget: don't block UI or handle errors visibly
+            axios.post("/api/analytics/track-view", {
+                username,
+                referrer: document.referrer || "",
+                screenResolution: `${window.screen.width}x${window.screen.height}`,
+            }).catch(() => {
+                // Silently fail — analytics should never break the user experience
+            });
+        }
+    }, [username, profile, isOwner]);
+
+    // Track link click (skip if owner)
+    const handleLinkClick = (url: string, title?: string) => {
+        if (isOwner) return; // Don't track owner's own clicks
+        // Fire-and-forget tracking
+        axios.post("/api/analytics/track-click", {
+            username,
+            linkUrl: url,
+            linkTitle: title || "",
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+        }).catch(() => {
+            // Silently fail
+        });
+    };
 
     const getInitials = (name?: string, username?: string) => {
         if (name) {
@@ -83,64 +132,66 @@ export function PublicProfile() {
     };
 
     const getPlatformIcon = (platform?: string) => {
-        const iconClass = "h-5 w-5";
+        const iconClass = "h-5 w-5 flex-shrink-0 text-inherit";
         switch (platform) {
             case "linkedin":
-                return <Linkedin className={`${iconClass} text-[#0A66C2]`} />;
+                return <Linkedin className={iconClass} />;
             case "github":
-                return <Github className={`${iconClass} text-foreground`} />;
+                return <Github className={iconClass} />;
             case "instagram":
-                return <Instagram className={`${iconClass} text-[#E4405F]`} />;
+                return <Instagram className={iconClass} />;
             default:
-                return <LinkIcon className={`${iconClass} text-muted-foreground`} />;
+                return <LinkIcon className={iconClass} />;
         }
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <p className="text-muted-foreground">Loading profile...</p>
+            <div className="min-h-screen flex items-center justify-center bg-zinc-950">
+                <p className="text-muted-foreground font-sans text-sm animate-pulse">Loading profile...</p>
             </div>
         );
     }
 
     if (error || !profile) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-zinc-950 font-sans">
                 <div className="text-center">
-                    <h1 className="text-4xl font-bold mb-2">404</h1>
-                    <p className="text-muted-foreground">Profile not found</p>
+                    <h1 className="text-4xl font-bold mb-2 text-white">404</h1>
+                    <p className="text-muted-foreground text-sm">Profile not found</p>
                 </div>
             </div>
         );
     }
 
+    const themeObj = themes.find((t) => t.id === profile.theme) || themes[0];
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-background via-accent/5 to-primary/5">
-            <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12 py-12 sm:py-16 md:py-20 lg:py-24">
+        <div className={`min-h-screen font-sans ${themeObj.backgroundClass}`}>
+            <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-24">
                 {/* Header Section */}
-                <div className="mb-8 sm:mb-10 md:mb-12">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-start gap-4 sm:gap-6 mb-6">
-                        <Avatar className="h-16 w-16 sm:h-20 sm:w-20 ring-2 ring-border">
-                            <AvatarFallback className="text-xl sm:text-2xl font-bold bg-gradient-to-br from-primary/10 to-accent">
+                <div className="mb-10 sm:mb-12">
+                    <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 mb-8">
+                        <Avatar className="h-20 w-20 sm:h-24 sm:w-24 ring-4 ring-white/10 shadow-lg">
+                            <AvatarFallback className="text-2xl sm:text-3xl font-bold bg-primary text-primary-foreground">
                                 {getInitials(profile.displayName, profile.username)}
                             </AvatarFallback>
                         </Avatar>
 
                         <div className="flex-1 w-full sm:w-auto">
-                            <div className="flex flex-col sm:flex-row items-start sm:items-start justify-between gap-3 sm:gap-4">
+                            <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
                                 <div className="flex-1">
-                                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight mb-1">
+                                    <h1 className={`text-3xl sm:text-4xl font-display font-black tracking-tight mb-1.5 ${themeObj.titleClass}`}>
                                         {profile.displayName || profile.username}
                                     </h1>
-                                    <p className="text-sm sm:text-base text-muted-foreground">
+                                    <p className={`text-sm sm:text-base font-semibold ${themeObj.bioClass}`}>
                                         @{profile.username}
                                     </p>
                                 </div>
                                 <Button
                                     variant="outline"
                                     size="sm"
-                                    className="gap-2 w-full sm:w-auto"
+                                    className="gap-2 w-full sm:w-auto bg-transparent border-current/25 hover:bg-current/10 text-inherit font-bold h-9"
                                     onClick={() => {
                                         if (navigator.share) {
                                             navigator.share({
@@ -152,115 +203,112 @@ export function PublicProfile() {
                                     }}
                                 >
                                     <Share className="h-4 w-4" />
-                                    <span className="sm:inline">Share</span>
+                                    <span>Share</span>
                                 </Button>
                             </div>
 
                             {profile.bio && (
-                                <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
+                                <p className={`text-sm sm:text-base mt-4 leading-relaxed max-w-xl ${themeObj.bioClass}`}>
                                     {profile.bio}
                                 </p>
                             )}
                         </div>
                     </div>
+                </div>
 
-                    {/* Social Links - Icon Buttons */}
-                    {profile.links && profile.links.length > 0 && (
-                        <div className="flex flex-wrap items-center gap-3 sm:gap-4 md:gap-6 mt-8 sm:mt-10 md:mt-12">
-                            {profile.links.map((link, index) => (
+                {/* Vertical Stack of Links */}
+                {profile.links && profile.links.length > 0 && (
+                    <div className="space-y-3 sm:space-y-4 mb-12">
+                        {profile.links.map((link, index) => {
+                            const hasTitle = !!link.title;
+                            return (
                                 <a
-                                    key={index}
+                                    key={link.id || index}
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-flex items-center justify-center h-10 w-10 sm:h-11 sm:w-11 rounded-md border border-border bg-background hover:bg-accent hover:border-primary/50 transition-all duration-200"
-                                    title={link.title && link.title !== "Website" ? link.title : getPlatformName(link.platform)}
+                                    className={`w-full py-4 px-5 rounded-2xl flex items-center shadow-sm transition-all duration-200 hover:scale-[1.01] ${themeObj.buttonClass} ${hasTitle ? "justify-between" : "justify-center"}`}
+                                    onClick={() => handleLinkClick(link.url, link.title || getPlatformName(link.platform))}
                                 >
-                                    {link.faviconUrl ? (
-                                        <img
-                                            src={link.faviconUrl}
-                                            alt={link.title || getPlatformName(link.platform)}
-                                            className="h-5 w-5 rounded object-cover"
-                                            onError={(e) => {
-                                                // Fallback to platform icon if favicon fails
-                                                e.currentTarget.style.display = 'none';
-                                                const parent = e.currentTarget.parentElement;
-                                                if (parent) {
-                                                    const iconDiv = document.createElement('div');
-                                                    iconDiv.innerHTML = getPlatformIcon(link.platform) as any;
-                                                    parent.appendChild(iconDiv.firstChild as Node);
-                                                }
-                                            }}
-                                        />
-                                    ) : (
-                                        getPlatformIcon(link.platform)
+                                    <div className={`flex items-center gap-3.5 min-w-0 ${!hasTitle ? "justify-center w-full" : ""}`}>
+                                        {link.showIcon && link.faviconUrl ? (
+                                            <img
+                                                src={link.faviconUrl}
+                                                alt=""
+                                                className="h-5 w-5 rounded-sm object-cover flex-shrink-0"
+                                                onError={(e) => {
+                                                    e.currentTarget.style.display = 'none';
+                                                }}
+                                            />
+                                        ) : (
+                                            getPlatformIcon(link.platform)
+                                        )}
+                                        {hasTitle && (
+                                            <span className="truncate text-sm sm:text-base font-semibold">{link.title}</span>
+                                        )}
+                                    </div>
+                                    {hasTitle && (
+                                        <ExternalLink className="h-4 w-4 opacity-60 flex-shrink-0" />
                                     )}
                                 </a>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Projects Section */}
                 {profile.projects && profile.projects.length > 0 && (
                     <div className="space-y-4">
-                        <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 mb-4 sm:mb-6">
-                            <Briefcase className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                            Projects
-                        </h2>
-                        <div className="space-y-3 sm:space-y-4">
+                        <div className="flex items-center gap-2 mb-6">
+                            <Briefcase className="h-5 w-5 text-inherit" />
+                            <h2 className={`text-lg sm:text-xl font-display font-bold uppercase tracking-wider ${themeObj.titleClass}`}>
+                                Featured Projects
+                            </h2>
+                        </div>
+                        <div className="space-y-4">
                             {profile.projects.map((project) => (
-                                <Card key={project.id} className="border-border/50 hover:border-border hover:shadow-md transition-all duration-200">
-                                    <CardContent className="p-4 sm:p-5 md:p-6">
-                                        <div className="space-y-3">
-                                            <div>
-                                                <h3 className="font-semibold text-base sm:text-lg mb-1">
-                                                    {project.projectTitle}
-                                                </h3>
-                                                {project.projectDescription && (
-                                                    <p className="text-sm text-muted-foreground leading-relaxed">
-                                                        {project.projectDescription}
-                                                    </p>
-                                                )}
-                                            </div>
-
-                                            {project.techStack && project.techStack.length > 0 && (
-                                                <div className="flex flex-wrap gap-2">
-                                                    {project.techStack.map((tech, index) => (
-                                                        <span
-                                                            key={index}
-                                                            className="text-xs px-2.5 sm:px-3 py-1 rounded-md bg-primary/5 text-primary border border-primary/10 font-medium"
-                                                        >
-                                                            {tech}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            )}
-
-                                            <a
-                                                href={project.projectLink}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline font-medium"
-                                            >
-                                                View Project
-                                                <LinkIcon className="h-3.5 w-3.5" />
-                                            </a>
+                                <div
+                                    key={project.id}
+                                    className={`p-6 rounded-2xl w-full text-left transition-all border border-transparent shadow-sm ${themeObj.cardClass}`}
+                                >
+                                    <div className="flex justify-between items-start gap-2">
+                                        <h3 className={`font-display font-bold text-base sm:text-lg mb-1.5 truncate ${themeObj.titleClass}`}>
+                                            {project.projectTitle}
+                                        </h3>
+                                        <a
+                                            href={project.projectLink}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-inherit hover:opacity-85 transition-opacity"
+                                            onClick={() => handleLinkClick(project.projectLink, project.projectTitle)}
+                                        >
+                                            <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                                        </a>
+                                    </div>
+                                    {project.projectDescription && (
+                                        <p className={`text-sm leading-relaxed mb-4 ${themeObj.textClass}`}>
+                                            {project.projectDescription}
+                                        </p>
+                                    )}
+                                    {project.techStack && project.techStack.length > 0 && (
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {project.techStack.map((tech, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="text-[10px] px-2 py-0.5 rounded bg-black/10 dark:bg-white/10 text-inherit font-mono font-medium"
+                                                >
+                                                    {tech}
+                                                </span>
+                                            ))}
                                         </div>
-                                    </CardContent>
-                                </Card>
+                                    )}
+                                </div>
                             ))}
                         </div>
                     </div>
                 )}
-
-                {/* Footer */}
-                {/* <div className="mt-16 pt-8 border-t border-border/50">
-                    <p className="text-center text-xs text-muted-foreground">
-                        Powered by OneProfile
-                    </p>
-                </div> */}
             </div>
         </div>
     );
 }
+

@@ -4,6 +4,7 @@ import DashboardLayout from "./components/layouts/DashboardLayout";
 import LandingLayout from "./components/layouts/LandingLayout";
 import Rootlayout from "./components/layouts/Rootlayout";
 import { checkAuth } from "./lib/auth";
+import Analytics from "./pages/Analytics";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -140,7 +141,24 @@ const dashboardIndexRoute = createRoute({
 const profileRoute = createRoute({
     getParentRoute: () => dashboardLayoutRoute,
     path: '/profile',
-    component: Profile,
+    beforeLoad: () => {
+        throw redirect({
+            to: '/dashboard' as any,
+            search: { tab: 'appearance' } as any
+        });
+    }
+})
+
+// Analytics Route
+const analyticsRoute = createRoute({
+    getParentRoute: () => dashboardLayoutRoute,
+    path: '/analytics',
+    beforeLoad: () => {
+        throw redirect({
+            to: '/dashboard' as any,
+            search: { tab: 'analytics' } as any
+        });
+    }
 })
 
 // Public Profile Route (must be last to avoid conflicts)
@@ -154,7 +172,7 @@ rootRoute.addChildren([
     landingLayoutRoute.addChildren([homeRoute, profilesRoute]),
     authlayout.addChildren([loginRoute, signupRoute]),
     onboardingRoute,
-    dashboardLayoutRoute.addChildren([dashboardIndexRoute, profileRoute]),
+    dashboardLayoutRoute.addChildren([dashboardIndexRoute, profileRoute, analyticsRoute]),
     publicProfileRoute  // Add at the end to avoid route conflicts
 ])
 

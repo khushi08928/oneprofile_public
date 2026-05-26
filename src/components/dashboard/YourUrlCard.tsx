@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import axios from "@/lib/axios";
 import { Check, Copy, ExternalLink, Link as LinkIcon, Share2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -15,7 +14,6 @@ export function YourUrlCard() {
                 const response = await axios.get("/api/profile/me/profile", {
                     withCredentials: true,
                 });
-
                 if (response.status === 200 && response.data) {
                     setUsername(response.data.profile?.username || "");
                 }
@@ -25,18 +23,21 @@ export function YourUrlCard() {
                 setLoading(false);
             }
         };
-
         fetchProfile();
     }, []);
 
     const getProfileUrl = () => {
         let baseUrl = import.meta.env.VITE_APP_URL || "http://localhost:5173";
-        // Remove trailing slash if present
         baseUrl = baseUrl.replace(/\/$/, '');
-        // If baseUrl already contains the protocol, use it as is, otherwise add it
         if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
             baseUrl = `https://${baseUrl}`;
         }
+        return `${baseUrl}/${username}`;
+    };
+
+    const getDisplayUrl = () => {
+        let baseUrl = import.meta.env.VITE_APP_URL || "localhost:5173";
+        baseUrl = baseUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
         return `${baseUrl}/${username}`;
     };
 
@@ -51,22 +52,17 @@ export function YourUrlCard() {
     };
 
     const handleShare = async () => {
-        const url = getProfileUrl();
-
-        // Check if Web Share API is available
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: "My OneURL Profile",
+                    title: "My OneProfile",
                     text: "Check out my profile!",
-                    url: url,
+                    url: getProfileUrl(),
                 });
             } catch (error) {
-                // User cancelled or share failed
-                console.log("Share cancelled or failed:", error);
+                console.log("Share cancelled:", error);
             }
         } else {
-            // Fallback to copy
             handleCopy();
         }
     };
@@ -77,94 +73,72 @@ export function YourUrlCard() {
 
     if (loading) {
         return (
-            <Card>
-                <CardContent className="p-6">
-                    <p className="text-sm text-muted-foreground">Loading...</p>
-                </CardContent>
-            </Card>
+            <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-5 sm:p-6 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)]">
+                <div className="h-5 w-32 bg-[#2C3947]/10 rounded animate-pulse" />
+            </div>
         );
     }
 
     if (!username) {
         return (
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <LinkIcon className="h-5 w-5" />
-                        Your URL
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                        No username set. Please complete your profile.
-                    </p>
-                </CardContent>
-            </Card>
+            <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-5 sm:p-6 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)]">
+                <p className="text-sm text-[#2C3947]/70 font-semibold">
+                    Complete your username setup to generate your shareable live link.
+                </p>
+            </div>
         );
     }
 
     return (
-        <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <LinkIcon className="h-5 w-5" />
-                    Your URL
-                </CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-3 sm:space-y-4">
-                    {/* URL Display with Copy Button */}
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2 p-2.5 sm:p-3 bg-accent/30 rounded-lg border border-border/50">
-                            <div className="flex-1 min-w-0 overflow-hidden">
-                                <p className="text-xs sm:text-sm font-mono font-medium break-all">
-                                    {getProfileUrl()}
-                                </p>
-                            </div>
-                            <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={handleCopy}
-                                className="flex-shrink-0 h-7 sm:h-8 hover:bg-accent"
-                                style={{ backgroundColor: 'transparent' }}
-                            >
-                                {copied ? (
-                                    <>
-                                        <Check className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500" />
-                                    </>
-                                ) : (
-                                    <>
-                                        <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                    </>
-                                )}
-                            </Button>
-                        </div>
-                        <p className="text-xs text-muted-foreground">
-                            Share this link to let others view your profile
-                        </p>
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
-                        <Button
-                            variant="default"
-                            onClick={handleShare}
-                            className="w-full gap-1.5 sm:gap-2 text-sm"
-                        >
-                            <Share2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            Share
-                        </Button>
-                        <Button
-                            variant="outline"
-                            onClick={handleOpen}
-                            className="w-full gap-1.5 sm:gap-2 text-sm"
-                        >
-                            <ExternalLink className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            Open
-                        </Button>
-                    </div>
+        <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-5 sm:p-6 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)]">
+            {/* Header row */}
+            <div className="flex items-center gap-2.5 mb-4">
+                <div className="h-8 w-8 rounded-lg bg-[#2C3947]/5 border border-[#2C3947]/10 flex items-center justify-center">
+                    <LinkIcon className="h-4 w-4 text-[#2C3947]" />
                 </div>
-            </CardContent>
-        </Card>
+                <div>
+                    <span className="text-sm font-black text-[#2C3947]">Your Profile URL</span>
+                    <p className="text-[10px] text-[#2C3947]/60 font-bold uppercase tracking-wider">Share your profile with the world</p>
+                </div>
+            </div>
+
+            {/* URL — click to copy */}
+            <button
+                onClick={handleCopy}
+                className="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl bg-slate-50 border-2 border-[#2C3947] hover:bg-slate-100/50 transition-all group mb-4 text-left p-0"
+            >
+                <span className="text-xs sm:text-sm font-bold text-[#2C3947] truncate group-hover:text-black transition-colors">
+                    {getDisplayUrl()}
+                </span>
+                <div className="flex-shrink-0">
+                    {copied ? (
+                        <Check className="h-4 w-4 text-emerald-600 stroke-[3px]" />
+                    ) : (
+                        <Copy className="h-4 w-4 text-[#2C3947]/60 group-hover:text-[#2C3947]" />
+                    )}
+                </div>
+            </button>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2.5">
+                <Button
+                    size="sm"
+                    onClick={handleShare}
+                    className="gap-1.5 h-9 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] rounded-xl shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all text-xs"
+                >
+                    <Share2 className="h-3.5 w-3.5" />
+                    Share
+                </Button>
+                <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleOpen}
+                    className="gap-1.5 h-9 bg-white text-[#2C3947] hover:bg-slate-50 font-bold border-2 border-[#2C3947] rounded-xl shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[1px] hover:translate-y-[1px] transition-all text-xs"
+                >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Live Preview
+                </Button>
+            </div>
+        </div>
     );
 }
