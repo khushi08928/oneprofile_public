@@ -87,11 +87,10 @@ export default async function handler(
     return res.setHeader("Content-Type", "text/html").send(html);
   }
 
-  // Determine backend URL
   const backendUrl =
     process.env.BACKEND_URL ||
     process.env.VITE_BACKEND_URL ||
-    "http://localhost:4000";
+    "https://oneprofilebackend.madebykhushi.dev";
 
   const siteUrl =
     process.env.VITE_APP_URL

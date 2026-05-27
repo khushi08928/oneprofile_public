@@ -65,7 +65,7 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.08]"
+                        className="text-3xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.08]"
                     >
                         Everything you are. <br className="hidden sm:inline" />{" "}
                         <span className="text-[#2C3947]">
@@ -94,7 +94,7 @@ export function HeroSection() {
                     <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0">
                         <Link2 className="h-4 w-4 mr-1.5 text-[#2C3947]/50 flex-shrink-0" />
                         <span className="hidden sm:inline">oneprofile.madebykhushi.dev/</span>
-                        <span className="inline sm:hidden">oneprofile.madebykhushi.dev/</span>
+                        <span className="inline sm:hidden text-[10px]">oneprofile.madebykhushi.dev/</span>
                         <input
                             type="text"
                             placeholder="yourname"

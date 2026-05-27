@@ -2,7 +2,7 @@
     "rewrites": [
         {
             "source": "/api/og-image/:username",
-            "destination": "https://one-url-mq15.onrender.com/api/v1/og/image/:username"
+            "destination": "https://oneprofilebackend.madebykhushi.dev/api/v1/og/image/:username"
         },
         {
             "source": "/login",
