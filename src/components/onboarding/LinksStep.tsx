@@ -52,8 +52,6 @@ export default function LinksStep({
 
     // Debounce timer ref
     const debounceTimerRef = useRef<number | null>(null);
-    // Input ref to maintain focus
-    const urlInputRef = useRef<HTMLInputElement>(null);
 
     // Cleanup timer on unmount
     useEffect(() => {
@@ -225,183 +223,6 @@ export default function LinksStep({
         }, 500); // 500ms debounce
     };
 
-    // Dialog component that renders in a portal
-    const AddLinkDialog = () => {
-        if (!showAddLinkDialog) return null;
-
-        return createPortal(
-            <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200"
-                onClick={(e) => {
-                    if (e.target === e.currentTarget) {
-                        setShowAddLinkDialog(false);
-                        setNewLinkTitle("");
-                        setNewLinkUrl("");
-                        setShowIcon(true);
-                    }
-                }}
-            >
-                <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-6 w-full max-w-md space-y-4 shadow-[8px_8px_0px_0px_rgba(44,57,71,1)] animate-in zoom-in-95 duration-200">
-                    <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-black text-[#2C3947] tracking-tight">Add New Link</h3>
-                        <button
-                            onClick={() => {
-                                setShowAddLinkDialog(false);
-                                setNewLinkTitle("");
-                                setNewLinkUrl("");
-                                setShowIcon(true);
-                            }}
-                            className="text-[#2C3947]/50 hover:text-[#2C3947] transition-colors"
-                        >
-                            <X className="h-5 w-5" />
-                        </button>
-                    </div>
-
-                    <p className="text-sm text-[#2C3947]/70 font-medium">
-                        Add a new link to your profile. Enter a URL below.
-                    </p>
-
-                    {/* URL Field */}
-                    <div className="space-y-2">
-                        <Label htmlFor="linkUrl" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">Profile URL</Label>
-                        <div className="relative">
-                            <Input
-                                ref={urlInputRef}
-                                id="linkUrl"
-                                type="url"
-                                placeholder="example.com or https://yourprofile"
-                                value={newLinkUrl}
-                                onChange={(e) => handleUrlChange(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === "Enter" && newLinkUrl && validationState.isValid === true) {
-                                        addLink();
-                                    }
-                                }}
-                                autoFocus
-                                className={
-                                    validationState.isValid === false
-                                        ? "border-destructive focus-visible:border-destructive focus-visible:shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] pr-10"
-                                        : validationState.isValid === true
-                                            ? "border-green-500 focus-visible:border-green-500 focus-visible:shadow-[2px_2px_0px_0px_rgba(34,197,94,1)] pr-10"
-                                            : "pr-10"
-                                }
-                            />
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                {validationState.isValidating && (
-                                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                                )}
-                                {!validationState.isValidating && validationState.isValid === true && (
-                                    <CheckCircle2 className="h-4 w-4 text-green-500" />
-                                )}
-                                {!validationState.isValidating && validationState.isValid === false && (
-                                    <AlertCircle className="h-4 w-4 text-destructive" />
-                                )}
-                            </div>
-                        </div>
-                        {duplicateError && (
-                            <p className="text-xs text-destructive flex items-center gap-1 font-semibold animate-in slide-in-from-top-1 duration-200">
-                                <X className="h-3 w-3" />
-                                This link has already been added!
-                            </p>
-                        )}
-                        {validationState.message && (
-                            <p
-                                className={`text-xs flex items-center gap-1 font-semibold ${validationState.isValid === false
-                                    ? "text-destructive"
-                                    : validationState.isValid === true
-                                        ? "text-green-600"
-                                        : "text-muted-foreground"
-                                    }`}
-                            >
-                                {validationState.message}
-                            </p>
-                        )}
-                    </div>
-
-                    {/* Title Field (Optional) */}
-                    <div className="space-y-2 animate-in slide-in-from-top-1 duration-200">
-                        <Label htmlFor="linkTitle" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
-                            Name / Title <span className="text-[#2C3947]/40 font-normal">(Optional)</span>
-                        </Label>
-                        <Input
-                            id="linkTitle"
-                            type="text"
-                            placeholder="e.g. Portfolio, Blog"
-                            value={newLinkTitle}
-                            onChange={(e) => setNewLinkTitle(e.target.value)}
-                            className="border-2 rounded-xl h-10 transition-all border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
-                        />
-                        <p className="text-[10px] text-[#2C3947]/50 font-semibold">
-                            Leave empty to display only the icon in the preview.
-                        </p>
-                    </div>
-
-                    {/* Preview Section */}
-                    {newLinkUrl && validationState.isValid && validationState.faviconUrl && (
-                        <div className="space-y-2">
-                            <Label className="text-xs text-[#2C3947]/70 font-bold uppercase tracking-wider">Preview</Label>
-                            <div className="p-4 bg-slate-50 border-2 border-[#2C3947]/20 rounded-xl animate-in slide-in-from-top-2 duration-200">
-                                <div className="flex items-center gap-3">
-                                    {showIcon && validationState.faviconUrl && (
-                                        <div className="flex-shrink-0">
-                                            <img
-                                                src={validationState.faviconUrl}
-                                                alt="Favicon"
-                                                className="h-5 w-5 rounded object-cover"
-                                                onError={(e) => {
-                                                    const currentIndex = validationState.currentFaviconIndex || 0;
-                                                    const fallbacks = validationState.fallbackUrls || [];
-
-                                                    if (currentIndex < fallbacks.length) {
-                                                        e.currentTarget.src = fallbacks[currentIndex];
-                                                    } else {
-                                                        e.currentTarget.style.display = 'none';
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    )}
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-sm font-bold text-[#2C3947] truncate">
-                                            {newLinkTitle || newLinkUrl}
-                                        </p>
-                                        <p className="text-xs text-[#2C3947]/60 font-semibold truncate">
-                                            {newLinkUrl}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    <div className="flex gap-2 pt-2">
-                        <Button
-                            onClick={() => {
-                                setShowAddLinkDialog(false);
-                                setNewLinkTitle("");
-                                setNewLinkUrl("");
-                                setShowIcon(true);
-                            }}
-                            variant="outline"
-                            className="flex-1 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11"
-                        >
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={addLink}
-                            disabled={!newLinkUrl || validationState.isValidating || validationState.isValid !== true}
-                            className="flex-1 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none h-11"
-                        >
-                            Add Link
-                        </Button>
-                    </div>
-                </div>
-            </div>,
-            document.body
-        );
-    };
-
     return (
         <div className="space-y-6">
             <div className="text-center space-y-2">
@@ -503,8 +324,100 @@ export default function LinksStep({
                 </Button>
             </div>
 
-            {/* Render dialog in portal */}
-            <AddLinkDialog />
+            {/* Add Link Dialog - rendered inline in portal to avoid remount focus issues */}
+            {showAddLinkDialog && createPortal(
+                <div
+                    className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[9999] p-4 animate-in fade-in duration-200"
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget) {
+                            setShowAddLinkDialog(false);
+                            setNewLinkTitle("");
+                            setNewLinkUrl("");
+                            setShowIcon(true);
+                        }
+                    }}
+                >
+                    <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-6 w-full max-w-md space-y-4 shadow-[8px_8px_0px_0px_rgba(44,57,71,1)] animate-in zoom-in-95 duration-200">
+                        <div className="flex items-center justify-between">
+                            <h3 className="text-xl font-black text-[#2C3947] tracking-tight">Add New Link</h3>
+                            <button
+                                onClick={() => { setShowAddLinkDialog(false); setNewLinkTitle(""); setNewLinkUrl(""); setShowIcon(true); }}
+                                className="text-[#2C3947]/50 hover:text-[#2C3947] transition-colors"
+                            >
+                                <X className="h-5 w-5" />
+                            </button>
+                        </div>
+                        <p className="text-sm text-[#2C3947]/70 font-medium">Add a new link to your profile. Enter a URL below.</p>
+
+                        {/* URL Field */}
+                        <div className="space-y-2">
+                            <Label htmlFor="linkUrl" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">Profile URL</Label>
+                            <div className="relative">
+                                <Input
+                                    id="linkUrl"
+                                    type="url"
+                                    placeholder="example.com or https://yourprofile"
+                                    value={newLinkUrl}
+                                    onChange={(e) => handleUrlChange(e.target.value)}
+                                    onKeyDown={(e) => { if (e.key === "Enter" && newLinkUrl && validationState.isValid === true) addLink(); }}
+                                    autoFocus
+                                    className={validationState.isValid === false ? "border-destructive focus-visible:border-destructive focus-visible:shadow-[2px_2px_0px_0px_rgba(239,68,68,1)] pr-10" : validationState.isValid === true ? "border-green-500 focus-visible:border-green-500 focus-visible:shadow-[2px_2px_0px_0px_rgba(34,197,94,1)] pr-10" : "pr-10"}
+                                />
+                                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                    {validationState.isValidating && <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />}
+                                    {!validationState.isValidating && validationState.isValid === true && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                                    {!validationState.isValidating && validationState.isValid === false && <AlertCircle className="h-4 w-4 text-destructive" />}
+                                </div>
+                            </div>
+                            {duplicateError && <p className="text-xs text-destructive flex items-center gap-1 font-semibold animate-in slide-in-from-top-1 duration-200"><X className="h-3 w-3" />This link has already been added!</p>}
+                            {validationState.message && <p className={`text-xs flex items-center gap-1 font-semibold ${validationState.isValid === false ? "text-destructive" : validationState.isValid === true ? "text-green-600" : "text-muted-foreground"}`}>{validationState.message}</p>}
+                        </div>
+
+                        {/* Title Field (Optional) */}
+                        <div className="space-y-2">
+                            <Label htmlFor="linkTitle" className="font-bold text-xs text-[#2C3947]/80 uppercase tracking-wider">
+                                Name / Title <span className="text-[#2C3947]/40 font-normal">(Optional)</span>
+                            </Label>
+                            <Input
+                                id="linkTitle"
+                                type="text"
+                                placeholder="e.g. Portfolio, Blog"
+                                value={newLinkTitle}
+                                onChange={(e) => setNewLinkTitle(e.target.value)}
+                                className="border-2 rounded-xl h-10 transition-all border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
+                            />
+                            <p className="text-[10px] text-[#2C3947]/50 font-semibold">Leave empty to display only the icon in the preview.</p>
+                        </div>
+
+                        {/* Preview */}
+                        {newLinkUrl && validationState.isValid && validationState.faviconUrl && (
+                            <div className="space-y-2">
+                                <Label className="text-xs text-[#2C3947]/70 font-bold uppercase tracking-wider">Preview</Label>
+                                <div className="p-4 bg-slate-50 border-2 border-[#2C3947]/20 rounded-xl animate-in slide-in-from-top-2 duration-200">
+                                    <div className="flex items-center gap-3">
+                                        {showIcon && validationState.faviconUrl && (
+                                            <div className="flex-shrink-0">
+                                                <img src={validationState.faviconUrl} alt="Favicon" className="h-5 w-5 rounded object-cover" onError={(e) => { const fallbacks = validationState.fallbackUrls || []; const idx = validationState.currentFaviconIndex || 0; if (idx < fallbacks.length) { e.currentTarget.src = fallbacks[idx]; } else { e.currentTarget.style.display = 'none'; } }} />
+                                            </div>
+                                        )}
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-[#2C3947] truncate">{newLinkTitle || newLinkUrl}</p>
+                                            <p className="text-xs text-[#2C3947]/60 font-semibold truncate">{newLinkUrl}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Action Buttons */}
+                        <div className="flex gap-2 pt-2">
+                            <Button onClick={() => { setShowAddLinkDialog(false); setNewLinkTitle(""); setNewLinkUrl(""); setShowIcon(true); }} variant="outline" className="flex-1 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11">Cancel</Button>
+                            <Button onClick={addLink} disabled={!newLinkUrl || validationState.isValidating || validationState.isValid !== true} className="flex-1 bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] hover:translate-x-[2px] hover:translate-y-[2px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none h-11">Add Link</Button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
         </div>
     );
 }

@@ -11,6 +11,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    useSidebar,
 } from "@/components/ui/sidebar";
 import axios from "@/lib/axios";
 import { useNavigate, useLocation } from "@tanstack/react-router";
@@ -27,6 +28,7 @@ interface UserData {
 export function DashboardSidebar() {
     const navigate = useNavigate();
     const location = useLocation();
+    const { setOpenMobile } = useSidebar();
     const [user, setUser] = useState<UserData | null>(null);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -112,6 +114,7 @@ export function DashboardSidebar() {
                                     onClick={() => {
                                         // @ts-expect-error - Route types
                                         navigate({ to: "/dashboard", search: { tab: "links" } as any });
+                                        setOpenMobile(false);
                                     }}
                                     isActive={isTabActive("links")}
                                     className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
@@ -129,6 +132,7 @@ export function DashboardSidebar() {
                                     onClick={() => {
                                         // @ts-expect-error - Route types
                                         navigate({ to: "/dashboard", search: { tab: "projects" } as any });
+                                        setOpenMobile(false);
                                     }}
                                     isActive={isTabActive("projects")}
                                     className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
@@ -146,6 +150,7 @@ export function DashboardSidebar() {
                                     onClick={() => {
                                         // @ts-expect-error - Route types
                                         navigate({ to: "/dashboard", search: { tab: "appearance" } as any });
+                                        setOpenMobile(false);
                                     }}
                                     isActive={isTabActive("appearance")}
                                     className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
