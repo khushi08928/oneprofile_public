@@ -1,8 +1,40 @@
 {
     "rewrites": [
         {
+            "source": "/api/og-image/:username",
+            "destination": "https://one-url-mq15.onrender.com/api/v1/og/image/:username"
+        },
+        {
+            "source": "/login",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/signup",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/onboarding",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/profiles",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/dashboard",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/dashboard/(.*)",
+            "destination": "/index.html"
+        },
+        {
+            "source": "/:username",
+            "destination": "/api/[username]"
+        },
+        {
             "source": "/(.*)",
             "destination": "/index.html"
         }
     ]
-}
+}

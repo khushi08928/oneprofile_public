@@ -147,18 +147,105 @@ export function PublicProfile() {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-950">
-                <p className="text-muted-foreground font-sans text-sm animate-pulse">Loading profile...</p>
+            <div className="min-h-screen bg-gradient-to-br from-[#FEF9C3]/40 via-white to-[#FEF9C3]/20 font-sans">
+                <div className="max-w-2xl mx-auto px-4 sm:px-6 md:px-8 py-16 sm:py-20 md:py-24 animate-in fade-in duration-300">
+                    {/* Header Skeleton */}
+                    <div className="mb-10 sm:mb-12">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6 mb-8">
+                            {/* Avatar placeholder */}
+                            <div className="h-20 w-20 sm:h-24 sm:w-24 rounded-full bg-[#2C3947]/10 border-2 border-[#2C3947]/20 flex-shrink-0 animate-pulse" />
+
+                            <div className="flex-1 w-full sm:w-auto space-y-3">
+                                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4">
+                                    <div className="flex-1 space-y-2.5">
+                                        {/* Display name line */}
+                                        <div className="h-8 w-48 bg-[#2C3947]/15 rounded-xl mx-auto sm:mx-0 animate-pulse" />
+                                        {/* Username line */}
+                                        <div className="h-4 w-24 bg-[#2C3947]/10 rounded-lg mx-auto sm:mx-0 animate-pulse" />
+                                    </div>
+                                    {/* Share Button placeholder */}
+                                    <div className="h-9 w-24 bg-[#2C3947]/10 rounded-xl animate-pulse" />
+                                </div>
+                                {/* Bio lines */}
+                                <div className="space-y-2 mt-4 max-w-xl mx-auto sm:mx-0">
+                                    <div className="h-4 w-full bg-[#2C3947]/10 rounded-lg animate-pulse" />
+                                    <div className="h-4 w-[85%] bg-[#2C3947]/10 rounded-lg mx-auto sm:mx-0 animate-pulse" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Links Stack Skeleton */}
+                    <div className="space-y-3 sm:space-y-4 mb-12">
+                        {[1, 2, 3].map((i) => (
+                            <div
+                                key={i}
+                                className="w-full h-14 rounded-2xl bg-white/70 border-2 border-[#2C3947]/15 flex items-center justify-between px-5 shadow-[2px_2px_0px_0px_rgba(44,57,71,0.05)] animate-pulse"
+                                style={{ animationDelay: `${i * 150}ms` }}
+                            >
+                                <div className="flex items-center gap-3.5 w-full">
+                                    {/* Link Icon Placeholder */}
+                                    <div className="h-5 w-5 rounded bg-[#2C3947]/15 flex-shrink-0" />
+                                    {/* Link Title Placeholder */}
+                                    <div className="h-4 w-[35%] bg-[#2C3947]/10 rounded-lg" />
+                                </div>
+                                <div className="h-4 w-4 bg-[#2C3947]/10 rounded flex-shrink-0" />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Projects Section Skeleton */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-6 animate-pulse">
+                            <div className="h-5 w-5 bg-[#2C3947]/15 rounded" />
+                            <div className="h-4 w-36 bg-[#2C3947]/15 rounded" />
+                        </div>
+                        <div className="space-y-4">
+                            {[1, 2].map((i) => (
+                                <div
+                                    key={i}
+                                    className="p-6 rounded-2xl w-full bg-white/70 border-2 border-[#2C3947]/15 shadow-[3px_3px_0px_0px_rgba(44,57,71,0.05)] space-y-3.5 animate-pulse"
+                                    style={{ animationDelay: `${i * 200}ms` }}
+                                >
+                                    <div className="flex justify-between items-start gap-2">
+                                        <div className="h-5 w-[40%] bg-[#2C3947]/15 rounded-lg" />
+                                        <div className="h-4 w-4 bg-[#2C3947]/10 rounded" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="h-4 w-full bg-[#2C3947]/10 rounded-lg" />
+                                        <div className="h-4 w-[90%] bg-[#2C3947]/10 rounded-lg" />
+                                    </div>
+                                    <div className="flex gap-1.5 pt-1">
+                                        <div className="h-5 w-12 bg-[#2C3947]/10 rounded-md" />
+                                        <div className="h-5 w-14 bg-[#2C3947]/10 rounded-md" />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }
 
     if (error || !profile) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-zinc-950 font-sans">
-                <div className="text-center">
-                    <h1 className="text-4xl font-bold mb-2 text-white">404</h1>
-                    <p className="text-muted-foreground text-sm">Profile not found</p>
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#FEF9C3]/40 via-white to-[#FEF9C3]/20 font-sans p-4">
+                <div className="bg-white border-4 border-[#2C3947] rounded-3xl p-8 max-w-sm w-full text-center shadow-[8px_8px_0px_0px_rgba(44,57,71,1)] flex flex-col items-center space-y-6 animate-in fade-in zoom-in duration-200">
+                    <div className="w-16 h-16 rounded-2xl bg-red-100 border-2 border-[#2C3947] flex items-center justify-center shadow-[3px_3px_0px_0px_rgba(44,57,71,1)]">
+                        <span className="text-3xl font-black text-red-600">?</span>
+                    </div>
+                    <div>
+                        <h3 className="text-2xl font-display font-black text-[#2C3947] tracking-tight">404</h3>
+                        <p className="text-sm font-bold text-[#2C3947]/70 mt-1">Profile Not Found</p>
+                        <p className="text-xs text-[#2C3947]/50 mt-2 font-medium">The page you are looking for might have been removed or doesn't exist.</p>
+                    </div>
+                    <Button 
+                        onClick={() => window.location.href = "/"}
+                        className="w-full bg-[#2C3947] text-[#FEF9C3] hover:bg-[#212B36] font-bold border-2 border-[#2C3947] rounded-xl shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] transition-all hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)]"
+                    >
+                        Back to Home
+                    </Button>
                 </div>
             </div>
         );

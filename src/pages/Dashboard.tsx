@@ -6,7 +6,7 @@ import Analytics from "./Analytics";
 import axios from "@/lib/axios";
 import { themes } from "@/lib/themes";
 import { useLocation } from "@tanstack/react-router";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import {
     Briefcase,
     ExternalLink,
@@ -18,7 +18,8 @@ import {
     Settings2,
     Trash2,
     X,
-    Check
+    Check,
+    GripVertical
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -49,6 +50,96 @@ interface ProfileData {
     displayName: string;
     bio: string;
     theme?: string;
+}
+
+interface ReorderableLinksListProps {
+    initialLinks: SocialLink[];
+    onOrderChange: (newLinks: SocialLink[]) => void;
+    deleteLink: (id: string) => void;
+    getPlatformIcon: (platform?: string) => React.ReactNode;
+}
+
+function ReorderableLinksList({
+    initialLinks,
+    onOrderChange,
+    deleteLink,
+    getPlatformIcon
+}: ReorderableLinksListProps) {
+    const [localLinks, setLocalLinks] = useState(initialLinks);
+
+    useEffect(() => {
+        setLocalLinks(initialLinks);
+    }, [initialLinks]);
+
+    const handleReorder = (newOrder: SocialLink[]) => {
+        setLocalLinks(newOrder);
+    };
+
+    const handleDragEnd = () => {
+        onOrderChange(localLinks);
+    };
+
+    return (
+        <Reorder.Group
+            values={localLinks}
+            onReorder={handleReorder}
+            className="grid gap-3 sm:gap-4"
+            axis="y"
+        >
+            {localLinks.map((link) => (
+                <Reorder.Item
+                    key={link.id}
+                    value={link}
+                    onDragEnd={handleDragEnd}
+                    whileDrag={{
+                        scale: 1.02,
+                        boxShadow: "5px 5px 0px 0px rgba(44,57,71,1)",
+                        zIndex: 50
+                    }}
+                    className="flex items-center justify-between p-4 bg-white border-2 border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] rounded-2xl group cursor-grab active:cursor-grabbing select-none"
+                >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                        <GripVertical className="h-4 w-4 text-[#2C3947]/40 group-hover:text-[#2C3947]/70 flex-shrink-0 cursor-grab active:cursor-grabbing" />
+                        <div className="h-9 w-9 rounded-xl bg-slate-50 border-2 border-[#2C3947]/10 flex items-center justify-center flex-shrink-0">
+                            {link.faviconUrl ? (
+                                <img
+                                    src={link.faviconUrl}
+                                    alt=""
+                                    className="h-5 w-5 rounded object-cover"
+                                    onError={(e) => {
+                                        e.currentTarget.style.display = 'none';
+                                    }}
+                                />
+                            ) : (
+                                getPlatformIcon(link.platform)
+                            )}
+                        </div>
+                        <div className="min-w-0">
+                            <h4 className="text-sm font-black text-[#2C3947] truncate transition-colors">
+                                {link.title || link.url}
+                            </h4>
+                            {link.title && (
+                                <p className="text-xs text-[#2C3947]/60 truncate font-semibold max-w-[180px] sm:max-w-md">
+                                    {link.url}
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            deleteLink(link.id);
+                        }}
+                        className="h-8 w-8 rounded-lg text-[#2C3947]/60 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-500/20 flex items-center justify-center transition-all bg-transparent p-0 flex-shrink-0"
+                        title="Delete Link"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </button>
+                </Reorder.Item>
+            ))}
+        </Reorder.Group>
+    );
 }
 
 export default function Dashboard() {
@@ -118,6 +209,25 @@ export default function Dashboard() {
             },
             error: "Failed to remove link",
         });
+    };
+
+    const handleReorderComplete = async (newOrder: SocialLink[]) => {
+        const orderChanged = newOrder.some((link, index) => link.id !== links[index]?.id);
+        if (!orderChanged) return;
+
+        setLinks(newOrder);
+
+        try {
+            await axios.put(
+                "/api/profile/links/reorder",
+                { links: newOrder },
+                { withCredentials: true }
+            );
+        } catch (error) {
+            console.error("Failed to save link order:", error);
+            toast.error("Failed to save link order");
+            fetchData();
+        }
     };
 
     // Project Action Handlers
@@ -241,6 +351,9 @@ export default function Dashboard() {
                             <AddLink onSuccess={fetchData} />
                         </div>
 
+                        {/* Live URL Card */}
+                        <YourUrlCard />
+
                         {links.length === 0 ? (
                             <div className="border-2 border-dashed border-[#2C3947]/20 rounded-2xl p-12 text-center bg-slate-50/50">
                                 <div className="h-12 w-12 rounded-2xl bg-[#2C3947]/5 flex items-center justify-center mx-auto mb-4 border border-[#2C3947]/10">
@@ -252,49 +365,12 @@ export default function Dashboard() {
                                 </p>
                             </div>
                         ) : (
-                            <div className="grid gap-3 sm:gap-4">
-                                {links.map((link) => (
-                                    <div
-                                        key={link.id}
-                                        className="flex items-center justify-between p-4 bg-white border-2 border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] rounded-2xl hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[1px_1px_0px_0px_rgba(44,57,71,1)] transition-all duration-200 group"
-                                    >
-                                        <div className="flex items-center gap-3.5 min-w-0">
-                                            <div className="h-9 w-9 rounded-xl bg-slate-50 border-2 border-[#2C3947]/10 flex items-center justify-center flex-shrink-0">
-                                                {link.faviconUrl ? (
-                                                    <img
-                                                        src={link.faviconUrl}
-                                                        alt=""
-                                                        className="h-5 w-5 rounded object-cover"
-                                                        onError={(e) => {
-                                                            e.currentTarget.style.display = 'none';
-                                                        }}
-                                                    />
-                                                ) : (
-                                                    getPlatformIcon(link.platform)
-                                                )}
-                                            </div>
-                                            <div className="min-w-0">
-                                                <h4 className="text-sm font-black text-[#2C3947] truncate transition-colors">
-                                                    {link.title || link.url}
-                                                </h4>
-                                                {link.title && (
-                                                    <p className="text-xs text-[#2C3947]/60 truncate font-semibold max-w-[200px] sm:max-w-md">
-                                                        {link.url}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <button
-                                            onClick={() => deleteLink(link.id)}
-                                            className="h-8 w-8 rounded-lg text-[#2C3947]/60 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-500/20 flex items-center justify-center transition-all bg-transparent p-0"
-                                            title="Delete Link"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+                            <ReorderableLinksList
+                                initialLinks={links}
+                                onOrderChange={handleReorderComplete}
+                                deleteLink={deleteLink}
+                                getPlatformIcon={getPlatformIcon}
+                            />
                         )}
                     </motion.div>
                 )}
@@ -403,9 +479,6 @@ export default function Dashboard() {
                                 Personalize your typography, profile metadata, and visual theme
                             </p>
                         </div>
-
-                        {/* Live URL Card */}
-                        <YourUrlCard />
 
                         {/* Profile Info Form Card */}
                         <div className="bg-white border-2 border-[#2C3947] rounded-2xl p-5 sm:p-6 space-y-6 shadow-[4px_4px_0px_0px_rgba(44,57,71,1)]">

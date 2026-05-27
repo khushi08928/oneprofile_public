@@ -9,6 +9,17 @@ export function HeroSection() {
     const navigate = useNavigate();
     const [username, setUsername] = useState("");
     const [themeIndex, setThemeIndex] = useState(0);
+    const [isMobile, setIsMobile] = useState(false);
+
+    // Dynamic checks for screen width to handle mobile layout safely
+    useEffect(() => {
+        setIsMobile(window.innerWidth < 640);
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Auto-rotate themes in the mockup preview every 3 seconds
     useEffect(() => {
@@ -54,9 +65,9 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-5xl sm:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.08]"
+                        className="text-4xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.08]"
                     >
-                        Everything you are. <br />
+                        Everything you are. <br className="hidden sm:inline" />{" "}
                         <span className="text-[#2C3947]">
                             In one simple link.
                         </span>
@@ -80,15 +91,16 @@ export function HeroSection() {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="w-full max-w-md p-1.5 bg-white border-2 border-[#2C3947] rounded-2xl sm:rounded-full shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] flex flex-col sm:flex-row items-stretch sm:items-center gap-2 focus-within:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] focus-within:translate-x-[2px] focus-within:translate-y-[2px] transition-all duration-300"
                 >
-                    <div className="flex items-center pl-3 py-2 sm:py-0 text-sm font-bold text-[#2C3947]/60 select-none">
+                    <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0">
                         <Link2 className="h-4 w-4 mr-1.5 text-[#2C3947]/50 flex-shrink-0" />
-                        <span>oneprofile.madebykhushi.dev/</span>
+                        <span className="hidden sm:inline">oneprofile.madebykhushi.dev/</span>
+                        <span className="inline sm:hidden">oneprofile.madebykhushi.dev/</span>
                         <input
                             type="text"
                             placeholder="yourname"
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
-                            className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-0"
+                            className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-xs sm:text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-0"
                         />
                     </div>
                     <Button
@@ -109,9 +121,9 @@ export function HeroSection() {
 
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
-                    animate={{ opacity: 1, scale: 1, rotate: -2 }}
+                    animate={{ opacity: 1, scale: 1, rotate: isMobile ? 0 : -2 }}
                     transition={{ duration: 0.8, delay: 0.2 }}
-                    className="relative w-[280px] h-[520px] border-[8px] border-slate-900 rounded-[38px] bg-slate-950 overflow-hidden shadow-2xl flex flex-col ring-4 ring-slate-950/10 hover:rotate-0 transition-all duration-500"
+                    className="relative w-[260px] h-[480px] sm:w-[280px] sm:h-[520px] border-[8px] border-slate-900 rounded-[38px] bg-slate-950 overflow-hidden shadow-2xl flex flex-col ring-4 ring-slate-950/10 hover:rotate-0 transition-all duration-500"
                 >
                     {/* Notch */}
                     <div className="absolute top-2.5 left-1/2 -translate-x-1/2 w-24 h-4 bg-slate-900 rounded-full z-20 flex items-center justify-center">
