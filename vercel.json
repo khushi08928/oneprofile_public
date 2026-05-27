@@ -29,6 +29,19 @@
             "destination": "/index.html"
         },
         {
+            "source": "/og-home.png",
+            "destination": "/og-home.png"
+        },
+        {
+            "source": "/favicon-16x16.png",
+            "destination": "/favicon-16x16.png"
+        },
+        {
+            "source": "/assets/(.*)",
+            "destination": "/assets/$1"
+        },
+
+        {
             "source": "/:username",
             "destination": "/api/[username]"
         },

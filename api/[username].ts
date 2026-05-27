@@ -80,6 +80,13 @@ export default async function handler(
 ) {
   const username = (req.query.username as string) || "";
 
+  // Guard: static asset requests should never reach this handler (vercel.json handles them),
+  // but if they do, return 404 rather than serving HTML as an image.
+  const STATIC_EXTENSIONS = /\.(png|jpg|jpeg|gif|svg|ico|webp|css|js|json|woff|woff2|ttf|eot|map|txt|pdf|xml)$/i;
+  if (STATIC_EXTENSIONS.test(username)) {
+    return res.status(404).send("Not found");
+  }
+
   // Pass through known SPA routes
   if (!username || APP_ROUTES.has(username.toLowerCase())) {
     const indexPath = join(process.cwd(), "dist", "index.html");
