@@ -44,20 +44,20 @@ export function HeroSection() {
     };
 
     return (
-        <div className="grid lg:grid-cols-12 gap-12 items-center mb-12 pt-4 font-sans">
+        <div className="grid lg:grid-cols-12 gap-12 items-center mb-12 pt-4 font-sans w-full overflow-hidden">
             {/* Left Column: Headline and Call-To-Action */}
-            <div className="lg:col-span-7 text-left space-y-8">
+            <div className="lg:col-span-7 text-left space-y-8 w-full min-w-0">
                 <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-[#2C3947]/10 border border-[#2C3947]/20 text-xs font-bold text-[#2C3947] backdrop-blur-sm cursor-default"
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2C3947]/10 border border-[#2C3947]/20 text-xs font-bold text-[#2C3947] backdrop-blur-sm cursor-default max-w-full"
                 >
-                    <span className="relative flex h-2 w-2">
+                    <span className="relative flex h-2 w-2 flex-shrink-0">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2C3947] opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-[#2C3947]"></span>
                     </span>
-                    <span>OneProfile: Everything you are</span>
+                    <span className="truncate">OneProfile: Everything you are</span>
                 </motion.div>
 
                 <div className="space-y-4">
@@ -65,9 +65,10 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
-                        className="text-3xl sm:text-6xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.08]"
+                        className="text-2xl sm:text-5xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.1] break-words"
                     >
-                        Everything you are. <br className="hidden sm:inline" />{" "}
+                        Everything you are.{" "}
+                        <br className="hidden sm:inline" />
                         <span className="text-[#2C3947]">
                             In one simple link.
                         </span>
@@ -83,7 +84,7 @@ export function HeroSection() {
                     </motion.p>
                 </div>
 
-                {/* Claim Username Input Bar - Premium Neo-Brutalism design */}
+                {/* Claim Username Input Bar */}
                 <motion.form
                     onSubmit={handleClaim}
                     initial={{ opacity: 0, y: 20 }}
@@ -91,16 +92,15 @@ export function HeroSection() {
                     transition={{ duration: 0.6, delay: 0.4 }}
                     className="w-full max-w-md p-1.5 bg-white border-2 border-[#2C3947] rounded-2xl sm:rounded-full shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] flex flex-col sm:flex-row items-stretch sm:items-center gap-2 focus-within:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] focus-within:translate-x-[2px] focus-within:translate-y-[2px] transition-all duration-300"
                 >
-                    <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0">
-                        <Link2 className="h-4 w-4 mr-1.5 text-[#2C3947]/50 flex-shrink-0" />
-                        <span className="hidden sm:inline">oneprofile.madebykhushi.dev/</span>
-                        <span className="inline sm:hidden text-[10px]">oneprofile.madebykhushi.dev/</span>
+                    <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0 overflow-hidden">
+                        <Link2 className="h-4 w-4 mr-1 text-[#2C3947]/50 flex-shrink-0" />
+                        <span className="text-[9px] sm:text-sm truncate shrink-0 max-w-[140px] sm:max-w-none">oneprofile.madebykhushi.dev/</span>
                         <input
                             type="text"
                             placeholder="yourname"
                             value={username}
                             onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
-                            className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-xs sm:text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-0"
+                            className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-xs sm:text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-0 w-0"
                         />
                     </div>
                     <Button
