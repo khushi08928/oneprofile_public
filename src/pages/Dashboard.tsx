@@ -2,7 +2,7 @@ import { AddLink } from "@/components/profile/AddLink";
 import { AddProject } from "@/components/profile/AddProject";
 import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import { YourUrlCard } from "@/components/dashboard/YourUrlCard";
-import Analytics from "./Analytics";
+
 import axios from "@/lib/axios";
 import { themes } from "@/lib/themes";
 import { useLocation } from "@tanstack/react-router";
@@ -582,16 +582,6 @@ export default function Dashboard() {
                     </motion.div>
                 )}
 
-                {/* Analytics Tab */}
-                {activeTab === "analytics" && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                    >
-                        <Analytics />
-                    </motion.div>
-                )}
             </div>
 
             {/* Right Desktop Live Preview Pane */}

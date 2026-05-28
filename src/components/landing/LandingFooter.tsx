@@ -65,11 +65,7 @@ export function LandingFooter() {
                                     Curated Themes
                                 </a>
                             </li>
-                            <li>
-                                <a href="#analytics" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Live Analytics
-                                </a>
-                            </li>
+
                         </ul>
                     </div>
 

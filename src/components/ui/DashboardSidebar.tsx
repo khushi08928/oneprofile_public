@@ -163,23 +163,7 @@ export function DashboardSidebar() {
                                     <span>Appearance</span>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {/* <SidebarMenuItem className="mb-2">
-                                <SidebarMenuButton
-                                    onClick={() => {
-                                        // @ts-expect-error - Route types
-                                        navigate({ to: "/dashboard", search: { tab: "analytics" } as any });
-                                    }}
-                                    isActive={isTabActive("analytics")}
-                                    className={`h-11 px-3 rounded-xl border-2 font-bold transition-all ${
-                                        isTabActive("analytics")
-                                            ? "bg-[#2C3947] text-[#FEF9C3] border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:bg-[#2C3947] hover:text-[#FEF9C3]"
-                                            : "bg-transparent text-[#2C3947]/75 border-transparent hover:bg-slate-50 hover:text-[#2C3947]"
-                                    }`}
-                                >
-                                    <BarChart3 className="h-4 w-4" />
-                                    <span>Analytics</span>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem> */}
+
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

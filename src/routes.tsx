@@ -147,17 +147,6 @@ const profileRoute = createRoute({
     }
 })
 
-// Analytics Route
-const analyticsRoute = createRoute({
-    getParentRoute: () => dashboardLayoutRoute,
-    path: '/analytics',
-    beforeLoad: () => {
-        throw redirect({
-            to: '/dashboard' as any,
-            search: { tab: 'analytics' } as any
-        });
-    }
-})
 
 // Public Profile Route (must be last to avoid conflicts)
 const publicProfileRoute = createRoute({
@@ -170,7 +159,7 @@ rootRoute.addChildren([
     landingLayoutRoute.addChildren([homeRoute, profilesRoute]),
     authlayout.addChildren([loginRoute, signupRoute]),
     onboardingRoute,
-    dashboardLayoutRoute.addChildren([dashboardIndexRoute, profileRoute, analyticsRoute]),
+    dashboardLayoutRoute.addChildren([dashboardIndexRoute, profileRoute]),
     publicProfileRoute  // Add at the end to avoid route conflicts
 ])
 

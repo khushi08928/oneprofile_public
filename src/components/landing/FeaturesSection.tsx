@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ArrowUpRight, BarChart3, Link2, Palette, Users } from "lucide-react";
+import { ArrowUpRight, Link2, Palette, Users } from "lucide-react";
 
 export function FeaturesSection() {
     return (
@@ -9,7 +9,7 @@ export function FeaturesSection() {
                     Everything you need in one place.
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 font-bold">
-                    Powering creators with premium visual customization and live analytics.
+                    Powering creators with premium visual customization.
                 </p>
             </div>
 
@@ -57,7 +57,7 @@ export function FeaturesSection() {
                             Claim Your Handles
                         </h3>
                         <p className="text-sm text-[#5c2a70] leading-relaxed font-semibold">
-                            Own your unique subdomain handle and establish a unified personal brand across networks.
+                            Own your unique URL handle and establish a unified personal brand across networks.
                         </p>
                     </div>
                     <div className="mt-4 flex items-center gap-2 px-4 py-3 rounded-xl bg-[#4a1c5c] border border-purple-950/30 font-mono text-xs text-[#F3E5F5] select-none shadow-md">
@@ -66,9 +66,9 @@ export function FeaturesSection() {
                     </div>
                 </div>
 
-                {/* Bento Card 3: Visual Theme Engine (Spans 1 column) - Brutalism Yellow (Screenshot color!) */}
-                <div className="lg:col-span-1 group relative overflow-hidden rounded-3xl border-2 border-yellow-950/20 bg-[#FEF9C3] p-8 hover:border-yellow-950/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between min-h-[320px]">
-                    <div className="space-y-2">
+                {/* Bento Card 3: Visual Theme Engine (Spans 3 columns to complete the layout) - Brutalism Yellow */}
+                <div className="lg:col-span-3 group relative overflow-hidden rounded-3xl border-2 border-yellow-950/20 bg-[#FEF9C3] p-8 hover:border-yellow-950/40 hover:shadow-lg transition-all duration-300 flex flex-col sm:flex-row justify-between items-start sm:items-center min-h-[320px] lg:min-h-[220px]">
+                    <div className="space-y-2 max-w-xl">
                         <div className="h-10 w-10 rounded-xl bg-slate-900 text-[#FEF9C3] flex items-center justify-center mb-2 shadow-sm">
                             <Palette className="h-5 w-5" />
                         </div>
@@ -80,36 +80,11 @@ export function FeaturesSection() {
                         </p>
                     </div>
                     {/* Theme color bubbles */}
-                    <div className="mt-4 flex gap-2.5 bg-white/60 p-2.5 rounded-xl border border-yellow-950/10 w-fit">
+                    <div className="mt-4 sm:mt-0 flex gap-2.5 bg-white/60 p-2.5 rounded-xl border border-yellow-950/10 w-fit">
                         <div className="h-6 w-6 rounded-full bg-gradient-to-br from-rose-500 to-purple-600 shadow-sm border border-white/20" />
                         <div className="h-6 w-6 rounded-full bg-emerald-950 shadow-sm border border-white/20" />
                         <div className="h-6 w-6 rounded-full bg-[#fef9c3] shadow-sm border border-black/40" />
                         <div className="h-6 w-6 rounded-full bg-[#0B1528] shadow-sm border border-white/20" />
-                    </div>
-                </div>
-
-                {/* Bento Card 4: Click Analytics (Spans 2 columns) - Sky Blue */}
-                <div className="lg:col-span-2 group relative overflow-hidden rounded-3xl border-2 border-sky-950/20 bg-[#E1F5FE] p-8 hover:border-sky-950/40 hover:shadow-lg transition-all duration-300 flex flex-col justify-between min-h-[320px]">
-                    <div className="flex justify-between items-start gap-4">
-                        <div className="space-y-2 max-w-md">
-                            <div className="h-10 w-10 rounded-xl bg-[#0a3f5c] text-[#E1F5FE] flex items-center justify-center mb-2 shadow-sm">
-                                <BarChart3 className="h-5 w-5" />
-                            </div>
-                            <h3 className="text-2xl font-display font-black text-[#0a3f5c]">
-                                Real-Time Analytics
-                            </h3>
-                            <p className="text-sm text-[#1e587a] leading-relaxed font-semibold">
-                                Track total profile views, button clicks, and monitor click-through-rates (CTR) over time to measure link engagement.
-                            </p>
-                        </div>
-                    </div>
-                    {/* Mock chart layout */}
-                    <div className="mt-6 flex items-end gap-2 h-18 w-full max-w-[240px] border-b border-sky-950/20 pb-1.5 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                        <div className="flex-1 bg-[#0a3f5c]/20 h-6 rounded-t" />
-                        <div className="flex-1 bg-[#0a3f5c]/35 h-10 rounded-t" />
-                        <div className="flex-1 bg-[#0a3f5c]/50 h-8 rounded-t" />
-                        <div className="flex-1 bg-[#0a3f5c]/70 h-12 rounded-t" />
-                        <div className="flex-1 bg-[#0a3f5c] h-16 rounded-t shadow-sm" />
                     </div>
                 </div>
             </motion.div>
