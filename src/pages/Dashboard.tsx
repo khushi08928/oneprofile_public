@@ -1,32 +1,32 @@
-import { AddLink } from "@/components/profile/AddLink";
-import { AddProject } from "@/components/profile/AddProject";
 import { PhonePreview } from "@/components/dashboard/PhonePreview";
 import { YourUrlCard } from "@/components/dashboard/YourUrlCard";
+import { AddLink } from "@/components/profile/AddLink";
+import { AddProject } from "@/components/profile/AddProject";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import axios from "@/lib/axios";
 import { themes } from "@/lib/themes";
 import { useLocation } from "@tanstack/react-router";
-import { motion, AnimatePresence, Reorder } from "framer-motion";
+import { AnimatePresence, motion, Reorder, useDragControls } from "framer-motion";
 import {
     Briefcase,
+    Check,
     ExternalLink,
     Eye,
+    GripVertical,
     Layers,
     Link as LinkIcon,
     Loader2,
     Palette,
     Settings2,
     Trash2,
-    X,
-    Check,
-    GripVertical
+    X
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 
 interface SocialLink {
     id: string;
@@ -59,6 +59,82 @@ interface ReorderableLinksListProps {
     getPlatformIcon: (platform?: string) => React.ReactNode;
 }
 
+interface ReorderableLinkItemProps {
+    link: SocialLink;
+    deleteLink: (id: string) => void;
+    getPlatformIcon: (platform?: string) => React.ReactNode;
+    handleDragEnd: () => void;
+}
+
+function ReorderableLinkItem({
+    link,
+    deleteLink,
+    getPlatformIcon,
+    handleDragEnd
+}: ReorderableLinkItemProps) {
+    const controls = useDragControls();
+
+    return (
+        <Reorder.Item
+            key={link.id}
+            value={link}
+            dragListener={false}
+            dragControls={controls}
+            onDragEnd={handleDragEnd}
+            whileDrag={{
+                scale: 1.02,
+                boxShadow: "5px 5px 0px 0px rgba(44,57,71,1)",
+                zIndex: 50
+            }}
+            className="flex items-center justify-between p-4 bg-white border-2 border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] rounded-2xl group select-none w-full min-w-0"
+        >
+            <div className="flex items-center gap-3.5 min-w-0 flex-1">
+                <div
+                    onPointerDown={(e) => controls.start(e)}
+                    className="p-1 -ml-1 cursor-grab active:cursor-grabbing touch-none flex-shrink-0"
+                >
+                    <GripVertical className="h-4 w-4 text-[#2C3947]/40 group-hover:text-[#2C3947]/70" />
+                </div>
+                <div className="h-9 w-9 rounded-xl bg-slate-50 border-2 border-[#2C3947]/10 flex items-center justify-center flex-shrink-0">
+                    {link.faviconUrl ? (
+                        <img
+                            src={link.faviconUrl}
+                            alt=""
+                            className="h-5 w-5 rounded object-cover"
+                            onError={(e) => {
+                                e.currentTarget.style.display = 'none';
+                            }}
+                        />
+                    ) : (
+                        getPlatformIcon(link.platform)
+                    )}
+                </div>
+                <div className="min-w-0 flex-1">
+                    <h4 className="text-sm font-black text-[#2C3947] truncate transition-colors">
+                        {link.title || link.url}
+                    </h4>
+                    {link.title && (
+                        <p className="text-xs text-[#2C3947]/60 truncate font-semibold">
+                            {link.url}
+                        </p>
+                    )}
+                </div>
+            </div>
+
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    deleteLink(link.id);
+                }}
+                className="h-8 w-8 rounded-lg text-[#2C3947]/60 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-500/20 flex items-center justify-center transition-all bg-transparent p-0 flex-shrink-0 ml-4"
+                title="Delete Link"
+            >
+                <Trash2 className="h-4 w-4" />
+            </button>
+        </Reorder.Item>
+    );
+}
+
 function ReorderableLinksList({
     initialLinks,
     onOrderChange,
@@ -83,60 +159,17 @@ function ReorderableLinksList({
         <Reorder.Group
             values={localLinks}
             onReorder={handleReorder}
-            className="grid gap-3 sm:gap-4"
+            className="grid gap-3 sm:gap-4 w-full min-w-0"
             axis="y"
         >
             {localLinks.map((link) => (
-                <Reorder.Item
+                <ReorderableLinkItem
                     key={link.id}
-                    value={link}
-                    onDragEnd={handleDragEnd}
-                    whileDrag={{
-                        scale: 1.02,
-                        boxShadow: "5px 5px 0px 0px rgba(44,57,71,1)",
-                        zIndex: 50
-                    }}
-                    className="flex items-center justify-between p-4 bg-white border-2 border-[#2C3947] shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] rounded-2xl group cursor-grab active:cursor-grabbing select-none"
-                >
-                    <div className="flex items-center gap-3.5 min-w-0">
-                        <GripVertical className="h-4 w-4 text-[#2C3947]/40 group-hover:text-[#2C3947]/70 flex-shrink-0 cursor-grab active:cursor-grabbing" />
-                        <div className="h-9 w-9 rounded-xl bg-slate-50 border-2 border-[#2C3947]/10 flex items-center justify-center flex-shrink-0">
-                            {link.faviconUrl ? (
-                                <img
-                                    src={link.faviconUrl}
-                                    alt=""
-                                    className="h-5 w-5 rounded object-cover"
-                                    onError={(e) => {
-                                        e.currentTarget.style.display = 'none';
-                                    }}
-                                />
-                            ) : (
-                                getPlatformIcon(link.platform)
-                            )}
-                        </div>
-                        <div className="min-w-0">
-                            <h4 className="text-sm font-black text-[#2C3947] truncate transition-colors">
-                                {link.title || link.url}
-                            </h4>
-                            {link.title && (
-                                <p className="text-xs text-[#2C3947]/60 truncate font-semibold max-w-[180px] sm:max-w-md">
-                                    {link.url}
-                                </p>
-                            )}
-                        </div>
-                    </div>
-
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteLink(link.id);
-                        }}
-                        className="h-8 w-8 rounded-lg text-[#2C3947]/60 hover:text-red-500 hover:bg-red-50 border border-transparent hover:border-red-500/20 flex items-center justify-center transition-all bg-transparent p-0 flex-shrink-0"
-                        title="Delete Link"
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </button>
-                </Reorder.Item>
+                    link={link}
+                    deleteLink={deleteLink}
+                    getPlatformIcon={getPlatformIcon}
+                    handleDragEnd={handleDragEnd}
+                />
             ))}
         </Reorder.Group>
     );
@@ -277,7 +310,7 @@ export default function Dashboard() {
     // Direct Theme Click Updates
     const handleThemeSelect = async (themeId: string) => {
         if (!profile) return;
-        
+
         // Optimistic update for instant preview feel
         setProfile((prev) => prev ? { ...prev, theme: themeId } : null);
 
@@ -548,11 +581,10 @@ export default function Dashboard() {
                                         <button
                                             key={t.id}
                                             onClick={() => handleThemeSelect(t.id)}
-                                            className={`relative aspect-[3/4] rounded-2xl overflow-hidden border-2 p-4 flex flex-col justify-between transition-all duration-300 text-left hover:scale-[1.02] shadow-sm ${t.backgroundClass} ${
-                                                isSelected
+                                            className={`relative aspect-[3/4] rounded-2xl overflow-hidden border-2 p-4 flex flex-col justify-between transition-all duration-300 text-left hover:scale-[1.02] shadow-sm ${t.backgroundClass} ${isSelected
                                                     ? "border-[#2C3947] shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] -translate-y-1"
                                                     : "border-[#2C3947]/30 hover:border-[#2C3947] hover:shadow-[3px_3px_0px_0px_rgba(44,57,71,1)] hover:-translate-y-0.5"
-                                            }`}
+                                                }`}
                                         >
                                             {/* Selected Badge */}
                                             {isSelected && (

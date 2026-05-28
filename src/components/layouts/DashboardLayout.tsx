@@ -1,8 +1,13 @@
 import { DashboardSidebar } from "@/components/ui/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Outlet } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export default function DashboardLayout() {
+    useEffect(() => {
+        sessionStorage.removeItem("claimed_username");
+    }, []);
+
     return (
         <SidebarProvider>
             <div className="flex min-h-screen w-full">

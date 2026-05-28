@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Link2 } from "lucide-react";
 import { useState, useEffect } from "react";
+import axios from "@/lib/axios";
 import { themes } from "@/lib/themes";
 
 export function HeroSection() {
@@ -10,6 +11,8 @@ export function HeroSection() {
     const [username, setUsername] = useState("");
     const [themeIndex, setThemeIndex] = useState(0);
     const [isMobile, setIsMobile] = useState(false);
+    const [isAvailable, setIsAvailable] = useState<boolean | null>(null);
+    const [isChecking, setIsChecking] = useState(false);
 
     // Dynamic checks for screen width to handle mobile layout safely
     useEffect(() => {
@@ -29,12 +32,35 @@ export function HeroSection() {
         return () => clearInterval(interval);
     }, []);
 
+    // Check username availability as the user types
+    useEffect(() => {
+        if (username.length < 3) {
+            setIsAvailable(null);
+            setIsChecking(false);
+            return;
+        }
+
+        setIsChecking(true);
+        const delayDebounceFn = setTimeout(async () => {
+            try {
+                const response = await axios.get(`/api/profile/check-username/${username}`);
+                setIsAvailable(response.data.available);
+            } catch (err) {
+                setIsAvailable(null);
+            } finally {
+                setIsChecking(false);
+            }
+        }, 300);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [username]);
+
     const activeTheme = themes[themeIndex];
 
     const handleClaim = (e: React.FormEvent) => {
         e.preventDefault();
         const cleanUsername = username.toLowerCase().replace(/[^a-z0-9_-]/g, "");
-        if (!cleanUsername) return;
+        if (!cleanUsername || cleanUsername.length < 3 || isAvailable === false) return;
 
         // Store the claimed username so the signup & onboarding flow pre-fills it automatically
         sessionStorage.setItem("claimed_username", cleanUsername);
@@ -85,32 +111,64 @@ export function HeroSection() {
                 </div>
 
                 {/* Claim Username Input Bar */}
-                <motion.form
-                    onSubmit={handleClaim}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
-                    className="w-full max-w-md p-1.5 bg-white border-2 border-[#2C3947] rounded-2xl sm:rounded-full shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] flex flex-col sm:flex-row items-stretch sm:items-center gap-2 focus-within:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] focus-within:translate-x-[2px] focus-within:translate-y-[2px] transition-all duration-300"
-                >
-                    <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0 overflow-hidden">
-                        <Link2 className="h-4 w-4 mr-1 text-[#2C3947]/50 flex-shrink-0" />
-                        <span className="text-[9px] sm:text-sm truncate shrink-0 max-w-[140px] sm:max-w-none">oneprofile.madebykhushi.dev/</span>
-                        <input
-                            type="text"
-                            placeholder="yourname"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
-                            className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-xs sm:text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-0 w-0"
-                        />
-                    </div>
-                    <Button
-                        type="submit"
-                        className="rounded-xl sm:rounded-full bg-[#2C3947] hover:bg-[#212B36] text-[#FEF9C3] font-black px-6 py-2.5 h-10 shadow-sm transition-all flex items-center justify-center gap-1.5 border border-transparent"
+                <div className="space-y-3 max-w-xl">
+                    <motion.form
+                        onSubmit={handleClaim}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.4 }}
+                        className="w-full p-1.5 bg-white border-2 border-[#2C3947] rounded-2xl sm:rounded-full shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] flex flex-col sm:flex-row items-stretch sm:items-center gap-2 focus-within:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] focus-within:translate-x-[2px] focus-within:translate-y-[2px] transition-all duration-300"
                     >
-                        <span>Claim Yours</span>
-                        <ArrowRight className="h-4 w-4" />
-                    </Button>
-                </motion.form>
+                        <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0 overflow-hidden">
+                            <Link2 className="h-4 w-4 mr-1 text-[#2C3947]/50 flex-shrink-0" />
+                            <span className="text-[10px] sm:text-xs md:text-sm truncate text-[#2C3947]/50 max-w-[130px] sm:max-w-[220px] md:max-w-none">oneprofile.madebykhushi.dev/</span>
+                            <input
+                                type="text"
+                                placeholder="yourname"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_-]/g, ""))}
+                                className="ml-0.5 flex-1 bg-transparent border-0 outline-none p-0 text-xs sm:text-sm font-bold text-[#2C3947] placeholder:text-[#2C3947]/30 focus:ring-0 focus:outline-none min-w-[80px]"
+                            />
+                            {username.length >= 3 && (
+                                <div className="flex items-center gap-1.5 mr-2 shrink-0 select-none">
+                                    {isChecking ? (
+                                        <span className="h-2.5 w-2.5 rounded-full bg-amber-500 animate-pulse" />
+                                    ) : isAvailable ? (
+                                        <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" title="Available" />
+                                    ) : (
+                                        <span className="h-2.5 w-2.5 rounded-full bg-rose-500" title="Taken" />
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                        <Button
+                            type="submit"
+                            disabled={username.length < 3 || isAvailable === false || isChecking}
+                            className="rounded-xl sm:rounded-full bg-[#2C3947] hover:bg-[#212B36] text-[#FEF9C3] font-black px-6 py-2.5 h-10 shadow-sm transition-all flex items-center justify-center gap-1.5 border border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span>Claim Yours</span>
+                            <ArrowRight className="h-4 w-4" />
+                        </Button>
+                    </motion.form>
+                    
+                    {/* Username Check Feedback */}
+                    <div className="h-5 pl-4 text-xs font-bold font-mono transition-all duration-200">
+                        {username.length > 0 && username.length < 3 && (
+                            <span className="text-slate-500">Username must be at least 3 characters.</span>
+                        )}
+                        {username.length >= 3 && (
+                            <>
+                                {isChecking && <span className="text-[#2C3947]/60 animate-pulse">Checking availability...</span>}
+                                {!isChecking && isAvailable === true && (
+                                    <span className="text-emerald-600">oneprofile.madebykhushi.dev/{username} is available!</span>
+                                )}
+                                {!isChecking && isAvailable === false && (
+                                    <span className="text-rose-600">Username is already taken.</span>
+                                )}
+                            </>
+                        )}
+                    </div>
+                </div>
             </div>
 
             {/* Right Column: Premium Rotating Mockup Showcase */}

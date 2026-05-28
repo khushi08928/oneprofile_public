@@ -24,8 +24,12 @@ export default function OnboardingFlow() {
     const [currentStep, setCurrentStep] = useState<OnboardingStep>("username");
 
     // Username step state
-    const [username, setUsername] = useState("");
-    const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(null);
+    const [username, setUsername] = useState(() => {
+        return sessionStorage.getItem("claimed_username") || "";
+    });
+    const [isUsernameAvailable, setIsUsernameAvailable] = useState<boolean | null>(() => {
+        return sessionStorage.getItem("claimed_username") ? true : null;
+    });
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
     // Profile step state
@@ -94,6 +98,13 @@ export default function OnboardingFlow() {
             return;
         }
 
+        // Do not check availability again if username matches the claimed one from hero section
+        const claimed = sessionStorage.getItem("claimed_username");
+        if (username === claimed) {
+            setIsUsernameAvailable(true);
+            return;
+        }
+
         // Debounce the validation to avoid excessive API calls
         const timeoutId = setTimeout(() => {
             checkUsernameAvailability();
@@ -104,6 +115,12 @@ export default function OnboardingFlow() {
 
     // Re-validate when returning to username step
     useEffect(() => {
+        const claimed = sessionStorage.getItem("claimed_username");
+        if (username === claimed) {
+            setIsUsernameAvailable(true);
+            return;
+        }
+
         if (currentStep === 'username' && username && username.length >= 3) {
             // Re-check username availability when user returns to this step
             checkUsernameAvailability();
@@ -123,6 +140,9 @@ export default function OnboardingFlow() {
             }, {
                 withCredentials: true,
             });
+
+            // Delete claimed username from session storage since onboarding is complete
+            sessionStorage.removeItem("claimed_username");
 
             // Redirect to dashboard after successful completion
             // @ts-expect-error - Route types will be inferred after dev server restart

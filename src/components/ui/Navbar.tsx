@@ -23,13 +23,13 @@ export function Navbar() {
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center gap-6">
-                        <Link
+                        {/* <Link
                             to={"/profiles" as any}
                             className="flex items-center gap-2 text-sm font-bold text-slate-600 transition-colors hover:text-[#2C3947]"
                         >
                             <Users className="h-4 w-4" />
                             All Profiles
-                        </Link>
+                        </Link> */}
 
                         {/* @ts-expect-error - Route types will be inferred after dev server restart */}
                         <Link to="/login">
