@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import axios from "@/lib/axios";
 import { useParams } from "@tanstack/react-router";
 import { Briefcase, Github, Instagram, Linkedin, Link as LinkIcon, Share, ExternalLink } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { themes } from "@/lib/themes";
 
 interface SocialLink {
@@ -38,7 +38,6 @@ export function PublicProfile() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    const hasTrackedView = useRef(false);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -60,51 +59,7 @@ export function PublicProfile() {
         }
     }, [username]);
 
-    // Check if the visitor is the profile owner (skip self-tracking)
-    const [isOwner, setIsOwner] = useState(false);
 
-    useEffect(() => {
-        // Try to detect if the logged-in user is the profile owner
-        axios.get("/api/profile/me/profile", { withCredentials: true })
-            .then(res => {
-                if (res.data?.profile?.username === username) {
-                    setIsOwner(true);
-                }
-            })
-            .catch(() => {
-                // Not logged in — definitely not the owner
-                setIsOwner(false);
-            });
-    }, [username]);
-
-    // Track profile view (fire once per page load, skip if owner)
-    useEffect(() => {
-        if (username && profile && !hasTrackedView.current && !isOwner) {
-            hasTrackedView.current = true;
-            // Fire-and-forget: don't block UI or handle errors visibly
-            axios.post("/api/analytics/track-view", {
-                username,
-                referrer: document.referrer || "",
-                screenResolution: `${window.screen.width}x${window.screen.height}`,
-            }).catch(() => {
-                // Silently fail — analytics should never break the user experience
-            });
-        }
-    }, [username, profile, isOwner]);
-
-    // Track link click (skip if owner)
-    const handleLinkClick = (url: string, title?: string) => {
-        if (isOwner) return; // Don't track owner's own clicks
-        // Fire-and-forget tracking
-        axios.post("/api/analytics/track-click", {
-            username,
-            linkUrl: url,
-            linkTitle: title || "",
-            screenResolution: `${window.screen.width}x${window.screen.height}`,
-        }).catch(() => {
-            // Silently fail
-        });
-    };
 
     const getInitials = (name?: string, username?: string) => {
         if (name) {
@@ -315,7 +270,6 @@ export function PublicProfile() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className={`w-full py-4 px-5 rounded-2xl flex items-center shadow-sm transition-all duration-200 hover:scale-[1.01] ${themeObj.buttonClass} ${hasTitle ? "justify-between" : "justify-center"}`}
-                                    onClick={() => handleLinkClick(link.url, link.title || getPlatformName(link.platform))}
                                 >
                                     <div className={`flex items-center gap-3.5 min-w-0 ${!hasTitle ? "justify-center w-full" : ""}`}>
                                         {link.showIcon && link.faviconUrl ? (
@@ -367,7 +321,6 @@ export function PublicProfile() {
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-inherit hover:opacity-85 transition-opacity"
-                                            onClick={() => handleLinkClick(project.projectLink, project.projectTitle)}
                                         >
                                             <ExternalLink className="h-4 w-4 flex-shrink-0" />
                                         </a>
