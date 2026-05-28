@@ -73,19 +73,6 @@ export function PublicProfile() {
         return username?.slice(0, 2).toUpperCase() || "??";
     };
 
-    const getPlatformName = (platform?: string): string => {
-        switch (platform) {
-            case "linkedin":
-                return "LinkedIn";
-            case "github":
-                return "GitHub";
-            case "instagram":
-                return "Instagram";
-            default:
-                return "Website";
-        }
-    };
-
     const getPlatformIcon = (platform?: string) => {
         const iconClass = "h-5 w-5 flex-shrink-0 text-inherit";
         switch (platform) {

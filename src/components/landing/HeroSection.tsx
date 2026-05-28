@@ -69,14 +69,39 @@ export function HeroSection() {
         navigate({ to: "/signup" as any });
     };
 
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.12,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: "spring",
+                stiffness: 80,
+                damping: 15,
+            },
+        },
+    };
+
     return (
         <div className="grid lg:grid-cols-12 gap-12 items-center mb-12 pt-4 font-sans w-full overflow-hidden">
             {/* Left Column: Headline and Call-To-Action */}
-            <div className="lg:col-span-7 text-left space-y-8 w-full min-w-0">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="lg:col-span-7 text-left space-y-8 w-full min-w-0"
+            >
                 <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    variants={itemVariants}
                     className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2C3947]/10 border border-[#2C3947]/20 text-xs font-bold text-[#2C3947] backdrop-blur-sm cursor-default max-w-full"
                 >
                     <span className="relative flex h-2 w-2 flex-shrink-0">
@@ -88,9 +113,7 @@ export function HeroSection() {
 
                 <div className="space-y-4">
                     <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.1 }}
+                        variants={itemVariants}
                         className="text-2xl sm:text-5xl lg:text-7xl font-display font-black tracking-tight text-[#2C3947] leading-[1.1] break-words"
                     >
                         Everything you are.{" "}
@@ -101,9 +124,7 @@ export function HeroSection() {
                     </motion.h1>
 
                     <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.25 }}
+                        variants={itemVariants}
                         className="text-sm sm:text-base text-slate-700 max-w-xl leading-relaxed font-semibold"
                     >
                         Join creators, builders, and brands worldwide. Share your projects, socials, and work in seconds with a beautiful, high-converting bio link.
@@ -111,12 +132,9 @@ export function HeroSection() {
                 </div>
 
                 {/* Claim Username Input Bar */}
-                <div className="space-y-3 max-w-xl">
-                    <motion.form
+                <motion.div variants={itemVariants} className="space-y-3 max-w-xl">
+                    <form
                         onSubmit={handleClaim}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
                         className="w-full p-1.5 bg-white border-2 border-[#2C3947] rounded-2xl sm:rounded-full shadow-[4px_4px_0px_0px_rgba(44,57,71,1)] flex flex-col sm:flex-row items-stretch sm:items-center gap-2 focus-within:shadow-[2px_2px_0px_0px_rgba(44,57,71,1)] focus-within:translate-x-[2px] focus-within:translate-y-[2px] transition-all duration-300"
                     >
                         <div className="flex items-center pl-3 py-2 sm:py-0 text-xs sm:text-sm font-bold text-[#2C3947]/60 select-none flex-1 min-w-0 overflow-hidden">
@@ -149,7 +167,7 @@ export function HeroSection() {
                             <span>Claim Yours</span>
                             <ArrowRight className="h-4 w-4" />
                         </Button>
-                    </motion.form>
+                    </form>
                     
                     {/* Username Check Feedback */}
                     <div className="h-5 pl-4 text-xs font-bold font-mono transition-all duration-200">
@@ -168,8 +186,8 @@ export function HeroSection() {
                             </>
                         )}
                     </div>
-                </div>
-            </div>
+                </motion.div>
+            </motion.div>
 
             {/* Right Column: Premium Rotating Mockup Showcase */}
             <div className="lg:col-span-5 flex justify-center items-center relative">
@@ -178,9 +196,14 @@ export function HeroSection() {
                 <div className="absolute w-60 h-60 rounded-full bg-indigo-500/5 blur-[80px] -z-10 translate-x-12 translate-y-12" />
 
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
-                    animate={{ opacity: 1, scale: 1, rotate: isMobile ? 0 : -2 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
+                    initial={{ opacity: 0, scale: 0.8, y: 50, rotate: 2 }}
+                    animate={{ opacity: 1, scale: 1, y: 0, rotate: isMobile ? 0 : -2 }}
+                    transition={{
+                        type: "spring",
+                        stiffness: 60,
+                        damping: 15,
+                        delay: 0.35,
+                    }}
                     className="relative w-[260px] h-[480px] sm:w-[280px] sm:h-[520px] border-[8px] border-slate-900 rounded-[38px] bg-slate-950 overflow-hidden shadow-2xl flex flex-col ring-4 ring-slate-950/10 hover:rotate-0 transition-all duration-500"
                 >
                     {/* Notch */}

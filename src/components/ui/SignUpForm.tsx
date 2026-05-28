@@ -104,7 +104,7 @@ export default function SignUpForm() {
                     </div>
                     <CardTitle className="text-2xl sm:text-3xl font-black text-[#2C3947] tracking-tight">Create your account</CardTitle>
                     <CardDescription className="text-[#2C3947]/70 font-medium text-xs sm:text-sm">
-                        Get started with your OneURL profile
+                        Get started with your OneProfile
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">

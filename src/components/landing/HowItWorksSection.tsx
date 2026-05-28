@@ -41,11 +41,32 @@ export function HowItWorksSection() {
         },
     ];
 
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.12,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 30 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        },
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.15 }}
             transition={{ duration: 0.6 }}
             className="space-y-16 font-sans py-4"
         >
@@ -54,7 +75,7 @@ export function HowItWorksSection() {
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false, amount: 0.15 }}
                     className="text-3.5xl sm:text-5xl font-display font-black tracking-tight text-[#2C3947] leading-[1.15]"
                 >
                     Create and share your link in minutes.
@@ -62,7 +83,7 @@ export function HowItWorksSection() {
                 <motion.p
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false, amount: 0.15 }}
                     transition={{ delay: 0.1 }}
                     className="text-sm sm:text-base text-slate-700 font-bold"
                 >
@@ -71,17 +92,20 @@ export function HowItWorksSection() {
             </div>
 
             {/* Grid Container */}
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.15 }}
+                className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 relative"
+            >
                 {/* Decorative Connecting line */}
                 <div className="hidden lg:block absolute top-[52px] left-[12%] right-[12%] h-[2px] bg-slate-300/40 -z-10 border-dashed border-t" />
 
                 {steps.map((step, idx) => (
                     <motion.div
                         key={idx}
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5, delay: idx * 0.1 }}
+                        variants={itemVariants}
                         whileHover={{ y: -8 }}
                         className={`relative group bg-white/95 border border-slate-200/70 p-7 rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between overflow-hidden ${step.hoverShadow}`}
                     >
@@ -112,7 +136,7 @@ export function HowItWorksSection() {
                         <div className={`absolute bottom-0 left-0 right-0 h-[4px] bg-gradient-to-r ${step.color} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left`} />
                     </motion.div>
                 ))}
-            </div>
+            </motion.div>
         </motion.div>
     );
 }

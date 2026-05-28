@@ -37,11 +37,32 @@ export function FAQSection() {
         setActiveIndex(activeIndex === index ? null : index);
     };
 
+    const containerVariants = {
+        hidden: {},
+        visible: {
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        },
+    };
+
     return (
         <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.15 }}
             transition={{ duration: 0.6 }}
             className="max-w-3xl mx-auto space-y-12 font-sans py-4"
         >
@@ -50,7 +71,7 @@ export function FAQSection() {
                 <motion.h2
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false, amount: 0.15 }}
                     className="text-4xl sm:text-6xl font-display font-black tracking-tight text-white leading-tight"
                 >
                     Questions? <span className="text-[#FEF9C3]">Answered.</span>
@@ -58,7 +79,7 @@ export function FAQSection() {
                 <motion.p
                     initial={{ opacity: 0 }}
                     whileInView={{ opacity: 1 }}
-                    viewport={{ once: true }}
+                    viewport={{ once: false, amount: 0.15 }}
                     transition={{ delay: 0.1 }}
                     className="text-sm sm:text-base text-[#FEF9C3]/75 font-semibold max-w-lg mx-auto"
                 >
@@ -67,12 +88,19 @@ export function FAQSection() {
             </div>
 
             {/* Accordion Stack */}
-            <div className="space-y-4">
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: false, amount: 0.15 }}
+                className="space-y-4"
+            >
                 {faqs.map((faq, index) => {
                     const isOpen = activeIndex === index;
                     return (
-                        <div
+                        <motion.div
                             key={index}
+                            variants={itemVariants}
                             className="bg-[#212B36]/60 border border-[#2C3947]/30 hover:border-[#FEF9C3]/40 hover:bg-[#212B36]/85 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm"
                         >
                             <button
@@ -105,10 +133,10 @@ export function FAQSection() {
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                        </div>
+                        </motion.div>
                     );
                 })}
-            </div>
+            </motion.div>
         </motion.div>
     );
 }

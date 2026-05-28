@@ -23,7 +23,7 @@ export function LandingFooter() {
                         </p>
                         <div className="flex items-center gap-3">
                             <a
-                                href="https://github.com"
+                                href="https://github.com/khushi08928"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="h-8 w-8 rounded-lg bg-[#212B36] border border-[#43556B]/30 hover:bg-[#43556B] flex items-center justify-center text-slate-200 hover:text-white transition-all shadow-sm"
@@ -31,7 +31,7 @@ export function LandingFooter() {
                                 <Github className="h-4 w-4" />
                             </a>
                             <a
-                                href="https://twitter.com"
+                                href="https://x.com/khushi_084"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="h-8 w-8 rounded-lg bg-[#212B36] border border-[#43556B]/30 hover:bg-[#43556B] flex items-center justify-center text-slate-200 hover:text-white transition-all shadow-sm"
@@ -39,7 +39,7 @@ export function LandingFooter() {
                                 <Twitter className="h-4 w-4" />
                             </a>
                             <a
-                                href="https://linkedin.com"
+                                href="https://www.linkedin.com/in/khushichawla0/"
                                 target="_blank"
                                 rel="noreferrer"
                                 className="h-8 w-8 rounded-lg bg-[#212B36] border border-[#43556B]/30 hover:bg-[#43556B] flex items-center justify-center text-slate-200 hover:text-white transition-all shadow-sm"
@@ -56,13 +56,13 @@ export function LandingFooter() {
                         </h4>
                         <ul className="space-y-2.5 text-xs sm:text-sm font-semibold">
                             <li>
-                                <a href="#features" className="text-slate-200/80 hover:text-white transition-colors">
+                                <a href="/#features" className="text-slate-200/80 hover:text-white transition-colors">
                                     Features
                                 </a>
                             </li>
                             <li>
-                                <a href="#themes" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Curated Themes
+                                <a href="/#how-it-works" className="text-slate-200/80 hover:text-white transition-colors">
+                                    How it Works
                                 </a>
                             </li>
 
@@ -73,22 +73,10 @@ export function LandingFooter() {
                         <h4 className="text-xs font-bold uppercase tracking-wider text-[#FEF9C3] mb-4">
                             Community
                         </h4>
-                        <ul className="space-y-2.5 text-xs sm:text-sm font-semibold">
-                            <li>
-                                <a href="https://github.com" target="_blank" rel="noreferrer" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Open Source
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://github.com" target="_blank" rel="noreferrer" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Contributors
-                                </a>
-                            </li>
-                            <li>
-                                <a href="https://discord.com" target="_blank" rel="noreferrer" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Discord Server
-                                </a>
-                            </li>
+                        <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-200/60">
+                            <li>Open Source</li>
+                            <li>Contributors</li>
+                            <li>Discord Server</li>
                         </ul>
                     </div>
 
@@ -96,17 +84,9 @@ export function LandingFooter() {
                         <h4 className="text-xs font-bold uppercase tracking-wider text-[#FEF9C3] mb-4">
                             Legal
                         </h4>
-                        <ul className="space-y-2.5 text-xs sm:text-sm font-semibold">
-                            <li>
-                                <a href="/privacy" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Privacy Policy
-                                </a>
-                            </li>
-                            <li>
-                                <a href="/terms" className="text-slate-200/80 hover:text-white transition-colors">
-                                    Terms of Use
-                                </a>
-                            </li>
+                        <ul className="space-y-2.5 text-xs sm:text-sm font-semibold text-slate-200/60">
+                            <li>Privacy Policy</li>
+                            <li>Terms of Use</li>
                         </ul>
                     </div>
                 </div>
