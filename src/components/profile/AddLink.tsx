@@ -86,13 +86,12 @@ function AddLinkDialog({
                                 onChange={(e) => onUrlChange(e.target.value)}
                                 placeholder="https://linkedin.com/in/username"
                                 required
-                                className={`border-2 rounded-xl h-10 pr-10 transition-all ${
-                                    validationState.isValid === false
+                                className={`border-2 rounded-xl h-10 pr-10 transition-all ${validationState.isValid === false
                                         ? "border-red-500 focus-visible:border-red-500 focus-visible:ring-0"
                                         : validationState.isValid === true
                                             ? "border-green-500 focus-visible:border-green-500 focus-visible:ring-0"
                                             : "border-[#2C3947]/20 focus-visible:border-[#2C3947] focus-visible:ring-0"
-                                }`}
+                                    }`}
                             />
                             <div className="absolute right-3 top-1/2 -translate-y-1/2">
                                 {validationState.isValidating && (

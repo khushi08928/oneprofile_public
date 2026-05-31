@@ -308,9 +308,9 @@ export default function LinksStep({
             </div>
 
             <div className="flex justify-center gap-4 pt-4">
-                <Button 
-                    onClick={onBack} 
-                    variant="outline" 
+                <Button
+                    onClick={onBack}
+                    variant="outline"
                     className="px-8 border-2 border-[#2C3947] font-bold text-[#2C3947] rounded-xl hover:bg-slate-50 transition-all h-11"
                 >
                     Back
